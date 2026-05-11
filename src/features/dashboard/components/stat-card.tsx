@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { cn } from "../../../utils/cn";
 
 type StatCardProps = {
   title: string;
@@ -15,9 +16,6 @@ export function StatCard({
   changeType,
   icon: Icon,
 }: StatCardProps) {
-  const changeColor =
-    changeType === "positive" ? "text-emerald-400" : "text-red-400";
-
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -31,7 +29,14 @@ export function StatCard({
         </div>
       </div>
 
-      <p className={`mt-4 text-sm ${changeColor}`}>{change}</p>
+      <p
+        className={cn(
+          "mt-4 text-sm",
+          changeType === "positive" ? "text-emerald-400" : "text-red-400"
+        )}
+      >
+        {change}
+      </p>
     </div>
   );
 }
