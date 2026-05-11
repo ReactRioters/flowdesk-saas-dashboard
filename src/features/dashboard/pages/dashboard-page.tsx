@@ -1,4 +1,11 @@
-import { CreditCard, DollarSign, TrendingDown, Users } from "lucide-react";
+import {
+  CreditCard,
+  DollarSign,
+  TrendingDown,
+  Users,
+} from "lucide-react";
+
+import { SectionCard } from "../../../components/ui/section-card";
 import { StatCard } from "../components/stat-card";
 
 const stats = [
@@ -34,26 +41,34 @@ const stats = [
 
 export function DashboardPage() {
   return (
-    <section>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Overview</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white">
+          Overview
+        </h1>
+
         <p className="mt-1 text-sm text-slate-400">
           Track revenue, users, subscriptions, and product growth.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat) => (
-          <StatCard
-            key={stat.title}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            changeType={stat.changeType}
-            icon={stat.icon}
-          />
-        ))}
-      </div>
-    </section>
+      <SectionCard
+        title="Business Metrics"
+        description="Key SaaS growth indicators and performance tracking."
+      >
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              change={stat.change}
+              changeType={stat.changeType}
+              icon={stat.icon}
+            />
+          ))}
+        </div>
+      </SectionCard>
+    </div>
   );
 }
