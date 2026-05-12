@@ -1,5 +1,7 @@
-import { Bell, Menu, Moon, Search, Sun } from "lucide-react";
+import { Bell, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
 import { useThemeStore } from "../../store/theme-store";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/auth-store";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -9,6 +11,13 @@ export function Header({
   onMenuClick,
 }: HeaderProps) {
   const { theme, toggleTheme } = useThemeStore();
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
     <header className="sticky top-0 z-30 border-b border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
       <div className="flex items-center justify-between gap-4">
@@ -52,7 +61,13 @@ export function Header({
             <Bell className="h-5 w-5" />
           </button>
 
-          <div className="h-9 w-9 rounded-full bg-slate-800" />
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
         </div>
       </div>
     </header>
