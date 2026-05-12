@@ -1,3 +1,3 @@
 export function AnalyticsPage() {
-  return <h1 className="text-2xl font-bold text-white">Analytics</h1>;
+  return <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Analytics</h1>;
 }

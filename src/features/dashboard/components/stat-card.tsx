@@ -17,14 +17,14 @@ export function StatCard({
   icon: Icon,
 }: StatCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+    <div className="rounded-2xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-slate-400">{title}</p>
-          <h3 className="mt-2 text-2xl font-bold text-white">{value}</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{title}</p>
+          <h3 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{value}</h3>
         </div>
 
-        <div className="rounded-xl bg-slate-800 p-2 text-slate-300">
+        <div className="rounded-xl bg-gray-100 dark:bg-slate-800 p-2 text-slate-500 dark:text-slate-300">
           <Icon className="h-5 w-5" />
         </div>
       </div>

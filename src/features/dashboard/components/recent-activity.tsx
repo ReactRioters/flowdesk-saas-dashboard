@@ -27,18 +27,18 @@ export function RecentActivity() {
       {activities.map((activity) => (
         <div
           key={`${activity.user}-${activity.time}`}
-          className="flex items-start justify-between gap-4 rounded-xl border border-slate-800 bg-slate-950 p-4"
+          className="flex items-start justify-between gap-4 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-4"
         >
           <div>
-            <p className="text-sm font-medium text-white">
+            <p className="text-sm font-medium text-slate-900 dark:text-white">
               {activity.user}
             </p>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {activity.action}
             </p>
           </div>
 
-          <span className="shrink-0 text-xs text-slate-500">
+          <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">
             {activity.time}
           </span>
         </div>

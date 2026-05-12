@@ -30,33 +30,33 @@ export function Sidebar({
     <>
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-white/50 dark:bg-black/50 lg:hidden"
           onClick={onClose}
         />
       )}
 
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-72 border-r border-slate-800
-          bg-slate-950 px-4 py-6 transition-transform duration-300
+          fixed inset-y-0 left-0 z-50 w-72 border-r border-gray-200 dark:border-slate-800 bg-white
+          dark:bg-slate-950 px-4 py-6 transition-transform duration-300
           lg:translate-x-0
           ${open ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               FlowDesk
             </h1>
 
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               SaaS Dashboard
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 lg:hidden"
+            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>
@@ -76,7 +76,7 @@ export function Sidebar({
                   `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     isActive
                       ? "bg-slate-800 text-white"
-                      : "text-slate-300 hover:bg-slate-900 hover:text-white"
+                      : "text-slate-500 hover:bg-slate-800 hover:text-white dark:text-slate-400 dark:hover:bg-slate-800"
                   }`
                 }
               >
