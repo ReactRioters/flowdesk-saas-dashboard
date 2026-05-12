@@ -7,6 +7,7 @@ import {
 
 import { SectionCard } from "../../../components/ui/section-card";
 import { StatCard } from "../components/stat-card";
+import { RevenueChart } from "../components/revenue-chart";
 
 const stats = [
   {
@@ -68,6 +69,12 @@ export function DashboardPage() {
             />
           ))}
         </div>
+      </SectionCard>
+      <SectionCard
+        title="Revenue Overview"
+        description="Monthly recurring revenue growth over the last 6 months."
+      >
+        <RevenueChart />
       </SectionCard>
     </div>
   );
