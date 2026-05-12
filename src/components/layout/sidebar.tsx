@@ -8,19 +8,12 @@ import {
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
+import { sidebarNavItems } from "./sidebar-nav-items";
 
 type SidebarProps = {
   open?: boolean;
   onClose?: () => void;
 };
-
-const navItems = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Users", href: "/users", icon: Users },
-  { label: "Analytics", href: "/analytics", icon: BarChart3 },
-  { label: "Billing", href: "/billing", icon: CreditCard },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
 
 export function Sidebar({
   open = true,
@@ -63,7 +56,7 @@ export function Sidebar({
         </div>
 
         <nav className="space-y-1">
-          {navItems.map((item) => {
+          {sidebarNavItems.map((item) => {
             const Icon = item.icon;
 
             return (
