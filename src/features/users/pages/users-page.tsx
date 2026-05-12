@@ -1,3 +1,5 @@
+import { StatusBadge } from "../../../components/ui/status-badge";
+
 const users = [
   {
     name: "Sarah Johnson",
@@ -27,7 +29,7 @@ const users = [
     status: "Inactive",
     plan: "Free",
   },
-];
+] as const;
 
 export function UsersPage() {
   return (
@@ -69,9 +71,7 @@ export function UsersPage() {
                   <td className="px-6 py-4 text-slate-300">{user.role}</td>
 
                   <td className="px-6 py-4">
-                    <span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-300">
-                      {user.status}
-                    </span>
+                    <StatusBadge status={user.status} />
                   </td>
 
                   <td className="px-6 py-4 text-slate-300">{user.plan}</td>
