@@ -10,21 +10,26 @@ import { Input } from "../../../components/ui/input";
 
 export function UsersPage() {
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
   });
   const filteredUsers = useMemo(() => {
-  return users.filter((user) => {
-    const searchValue = search.toLowerCase();
+    return users.filter((user) => {
+      const searchValue = search.toLowerCase();
 
-    return (
-      user.name.toLowerCase().includes(searchValue) ||
-      user.email.toLowerCase().includes(searchValue) ||
-      user.role.toLowerCase().includes(searchValue)
-    );
-  });
-}, [users, search]);
+      const matchesSearch =
+        user.name.toLowerCase().includes(searchValue) ||
+        user.email.toLowerCase().includes(searchValue) ||
+        user.role.toLowerCase().includes(searchValue);
+
+      const matchesRole =
+        roleFilter === "all" || user.role === roleFilter;
+
+      return matchesSearch && matchesRole;
+    });
+  }, [users, search, roleFilter]);
 
   return (
     <div className="space-y-6">
@@ -36,17 +41,29 @@ export function UsersPage() {
           Manage users, roles, subscription plans, and account status.
         </p>
       </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
-      <div className="relative max-w-sm">
-  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search users..."
+            className="pl-10"
+          />
+        </div>
 
-  <Input
-    value={search}
-    onChange={(event) => setSearch(event.target.value)}
-    placeholder="Search users..."
-    className="pl-10"
-  />
-</div>
+        <select
+          value={roleFilter}
+          onChange={(event) => setRoleFilter(event.target.value)}
+          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+        >
+          <option value="all">All roles</option>
+          <option value="Admin">Admin</option>
+          <option value="Manager">Manager</option>
+          <option value="Member">Member</option>
+        </select>
+      </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
@@ -66,7 +83,7 @@ export function UsersPage() {
               icon={<Users className="h-6 w-6" />}
               title="No users found"
               description="Once users join your workspace, they will appear here."
-            /> ) : (
+            />) : (
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-400">
                 <tr>
