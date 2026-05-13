@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "../../../services/users-service";
+import { getUsers, type User } from "../../../services/users-service";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { Users } from "lucide-react";
@@ -8,13 +8,19 @@ import { UsersToolbar } from "../components/users-toolbar";
 import { useUsersFilter } from "../hooks/use-users-filter";
 import { Pagination } from "../../../components/ui/pagination";
 import { ErrorState } from "../../../components/ui/error-state";
+import { useEffect, useState } from "react";
+import { EditUserModal } from "../components/edit-user-modal";
+import { DeleteUserModal } from "../components/delete-user-modal";
 
 export function UsersPage() {
-
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
   });
+  const [localUsers, setLocalUsers] =
+    useState(users);
   const {
     search,
     setSearch,
@@ -27,14 +33,39 @@ export function UsersPage() {
 
     sortOrder,
     setSortOrder,
-filteredUsers,
+    filteredUsers,
     paginatedUsers,
     currentPage,
     totalPages,
     setCurrentPage,
     resetFilters,
     hasActiveFilters
-  } = useUsersFilter(users);
+  } = useUsersFilter(localUsers);
+  useEffect(() => {
+    setLocalUsers(users);
+  }, [users]);
+
+  const handleUpdateUser = (
+    updatedUser: User
+  ) => {
+    setLocalUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === updatedUser.id
+          ? updatedUser
+          : user
+      )
+    );
+
+    setSelectedUser(null);
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    setLocalUsers((prevUsers) =>
+      prevUsers.filter((user) => user.id !== userId)
+    );
+
+    setUserToDelete(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -58,9 +89,9 @@ filteredUsers,
         onSortOrderChange={setSortOrder}
         hasActiveFilters={hasActiveFilters}
       />
-<p className="text-sm text-slate-600 dark:text-slate-400">
-  Showing {paginatedUsers.length} of {filteredUsers.length} users
-</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400">
+        Showing {paginatedUsers.length} of {filteredUsers.length} users
+      </p>
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -87,7 +118,10 @@ filteredUsers,
                 description="Try adjusting your search or filter criteria."
               />
             ) : (
-            <UsersTable users={paginatedUsers} />
+            <UsersTable
+              users={paginatedUsers}
+              onEditUser={setSelectedUser}
+              onDeleteUser={setUserToDelete} />
           )}
           {!isLoading && paginatedUsers.length > 0 && (
             <Pagination
@@ -98,6 +132,18 @@ filteredUsers,
           )}
         </div>
       </div>
+      <EditUserModal
+        open={!!selectedUser}
+        user={selectedUser}
+        onClose={() => setSelectedUser(null)}
+        onSave={handleUpdateUser}
+      />
+      <DeleteUserModal
+        open={!!userToDelete}
+        user={userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onConfirm={handleDeleteUser}
+      />
     </div>
   );
 }

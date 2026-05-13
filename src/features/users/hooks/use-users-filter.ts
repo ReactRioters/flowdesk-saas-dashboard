@@ -2,14 +2,59 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { User } from "../../../services/users-service";
 import { useDebounce } from "../../../hooks/use-debounce";
+import { useSearchParams } from "react-router-dom";
 
 export function useUsersFilter(users: User[]) {
-    const [search, setSearch] = useState("");
-    const [roleFilter, setRoleFilter] = useState("all");
-    const [statusFilter, setStatusFilter] = useState("all");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [search, setSearch] = useState(
+        searchParams.get("search") || ""
+    );
+    const [roleFilter, setRoleFilter] =
+        useState(
+            searchParams.get("role") || "all"
+        );
+    const [statusFilter, setStatusFilter] =
+        useState(
+            searchParams.get("status") || "all"
+        );
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
+        searchParams.get("sort") === "desc" ? "desc" : "asc"
+    );
+    const [currentPage, setCurrentPage] = useState(
+        Number(searchParams.get("page")) || 1
+    );
     const debouncedSearch = useDebounce(search, 300);
+    useEffect(() => {
+        const params = new URLSearchParams();
+
+        if (search) {
+            params.set("search", search);
+        }
+
+        if (roleFilter !== "all") {
+            params.set("role", roleFilter);
+        }
+
+        if (statusFilter !== "all") {
+            params.set("status", statusFilter);
+        }
+
+        if (sortOrder !== "asc") {
+            params.set("sort", sortOrder);
+        }
+
+        if (currentPage > 1) {
+            params.set("page", String(currentPage));
+        }
+        setSearchParams(params);
+    }, [
+        search,
+        roleFilter,
+        statusFilter,
+        sortOrder,
+        currentPage,
+        setSearchParams,
+    ]);
 
     const itemsPerPage = 5;
 
@@ -50,7 +95,7 @@ export function useUsersFilter(users: User[]) {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [search, roleFilter, statusFilter]);
+    }, [search, roleFilter, statusFilter, sortOrder]);
 
     const resetFilters = () => {
         setSearch("");

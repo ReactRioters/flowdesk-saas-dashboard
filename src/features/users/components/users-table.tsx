@@ -1,11 +1,14 @@
 import { StatusBadge } from "../../../components/ui/status-badge";
 import type { User } from "../../../services/users-service";
+import { UsersRowActions } from "./users-row-actions";
 
 type UsersTableProps = {
   users: User[];
+  onEditUser: (user: User) => void;
+  onDeleteUser: (user: User) => void;
 };
 
-export function UsersTable({ users }: UsersTableProps) {
+export function UsersTable({ users, onEditUser, onDeleteUser }: UsersTableProps) {
   return (
     <table className="w-full min-w-[720px] text-left text-sm">
       <thead className="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-400">
@@ -14,6 +17,7 @@ export function UsersTable({ users }: UsersTableProps) {
           <th className="px-6 py-3 font-medium">Role</th>
           <th className="px-6 py-3 font-medium">Status</th>
           <th className="px-6 py-3 font-medium">Plan</th>
+          <th className="px-6 py-3 font-medium">Actions</th>
         </tr>
       </thead>
 
@@ -42,6 +46,12 @@ export function UsersTable({ users }: UsersTableProps) {
 
             <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
               {user.plan}
+            </td>
+            <td className="px-6 py-4">
+              <UsersRowActions
+                onEdit={() => onEditUser(user)}
+                onDelete={() => onDeleteUser(user)}
+              />
             </td>
           </tr>
         ))}
