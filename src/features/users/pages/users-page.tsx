@@ -1,22 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { StatusBadge } from "../../../components/ui/status-badge";
 import { getUsers } from "../../../services/users-service";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { Search, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "../../../components/ui/input";
+import { UsersTable } from "../components/users-table";
 
 export function UsersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState<
+    "asc" | "desc"
+  >("asc");
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
   });
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    const filtered = users.filter((user) => {
       const searchValue = search.toLowerCase();
 
       const matchesSearch =
@@ -27,9 +30,20 @@ export function UsersPage() {
       const matchesRole =
         roleFilter === "all" || user.role === roleFilter;
 
-      return matchesSearch && matchesRole;
+      const matchesStatus =
+        statusFilter === "all" || user.status === statusFilter;
+
+      return matchesSearch && matchesRole && matchesStatus;
     });
-  }, [users, search, roleFilter]);
+
+    const sorted = [...filtered].sort((a, b) => {
+      const comparison = a.name.localeCompare(b.name);
+
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+
+    return sorted;
+  }, [users, search, roleFilter, statusFilter, sortOrder]);
 
   return (
     <div className="space-y-6">
@@ -53,16 +67,40 @@ export function UsersPage() {
           />
         </div>
 
-        <select
-          value={roleFilter}
-          onChange={(event) => setRoleFilter(event.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-        >
-          <option value="all">All roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Manager">Manager</option>
-          <option value="Member">Member</option>
-        </select>
+        <div className="flex gap-2">
+          <select
+            value={roleFilter}
+            onChange={(event) => setRoleFilter(event.target.value)}
+            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          >
+            <option value="all">All roles</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="Member">Member</option>
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          >
+            <option value="all">All status</option>
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+          <select
+            value={sortOrder}
+            onChange={(event) =>
+              setSortOrder(
+                event.target.value as "asc" | "desc"
+              )
+            }
+            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          >
+            <option value="asc">Name A-Z</option>
+            <option value="desc">Name Z-A</option>
+          </select>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
@@ -82,48 +120,10 @@ export function UsersPage() {
             <EmptyState
               icon={<Users className="h-6 w-6" />}
               title="No users found"
-              description="Once users join your workspace, they will appear here."
-            />) : (
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-400">
-                <tr>
-                  <th className="px-6 py-3 font-medium">User</th>
-                  <th className="px-6 py-3 font-medium">Role</th>
-                  <th className="px-6 py-3 font-medium">Status</th>
-                  <th className="px-6 py-3 font-medium">Plan</th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {filteredUsers.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                  >
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-slate-900 dark:text-white">
-                        {user.name}
-                      </p>
-                      <p className="mt-1 text-slate-600 dark:text-slate-400">
-                        {user.email}
-                      </p>
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
-                      {user.role}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <StatusBadge status={user.status} />
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
-                      {user.plan}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              description="Try adjusting your search or filter criteria."
+            />
+          ) : (
+            <UsersTable users={filteredUsers} />
           )}
         </div>
       </div>
