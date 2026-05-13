@@ -4,13 +4,27 @@ import { StatusBadge } from "../../../components/ui/status-badge";
 import { getUsers } from "../../../services/users-service";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
-import { Users } from "lucide-react";
+import { Search, Users } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Input } from "../../../components/ui/input";
 
 export function UsersPage() {
+  const [search, setSearch] = useState("");
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
   });
+  const filteredUsers = useMemo(() => {
+  return users.filter((user) => {
+    const searchValue = search.toLowerCase();
+
+    return (
+      user.name.toLowerCase().includes(searchValue) ||
+      user.email.toLowerCase().includes(searchValue) ||
+      user.role.toLowerCase().includes(searchValue)
+    );
+  });
+}, [users, search]);
 
   return (
     <div className="space-y-6">
@@ -22,6 +36,17 @@ export function UsersPage() {
           Manage users, roles, subscription plans, and account status.
         </p>
       </div>
+
+      <div className="relative max-w-sm">
+  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+  <Input
+    value={search}
+    onChange={(event) => setSearch(event.target.value)}
+    placeholder="Search users..."
+    className="pl-10"
+  />
+</div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
@@ -36,7 +61,7 @@ export function UsersPage() {
         <div className="overflow-x-auto">
           {isLoading ? (
             <UsersTableSkeleton />
-          ) : users.length === 0 ? (
+          ) : filteredUsers.length === 0 ? (
             <EmptyState
               icon={<Users className="h-6 w-6" />}
               title="No users found"
@@ -53,7 +78,7 @@ export function UsersPage() {
               </thead>
 
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr
                     key={user.id}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
