@@ -2,48 +2,39 @@ import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../../services/users-service";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
-import { Search, Users } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Input } from "../../../components/ui/input";
+import { Users } from "lucide-react";
 import { UsersTable } from "../components/users-table";
+import { UsersToolbar } from "../components/users-toolbar";
+import { useUsersFilter } from "../hooks/use-users-filter";
+import { Pagination } from "../../../components/ui/pagination";
+import { ErrorState } from "../../../components/ui/error-state";
 
 export function UsersPage() {
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sortOrder, setSortOrder] = useState<
-    "asc" | "desc"
-  >("asc");
-  const { data: users = [], isLoading } = useQuery({
+
+  const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
   });
-  const filteredUsers = useMemo(() => {
-    const filtered = users.filter((user) => {
-      const searchValue = search.toLowerCase();
+  const {
+    search,
+    setSearch,
 
-      const matchesSearch =
-        user.name.toLowerCase().includes(searchValue) ||
-        user.email.toLowerCase().includes(searchValue) ||
-        user.role.toLowerCase().includes(searchValue);
+    roleFilter,
+    setRoleFilter,
 
-      const matchesRole =
-        roleFilter === "all" || user.role === roleFilter;
+    statusFilter,
+    setStatusFilter,
 
-      const matchesStatus =
-        statusFilter === "all" || user.status === statusFilter;
-
-      return matchesSearch && matchesRole && matchesStatus;
-    });
-
-    const sorted = [...filtered].sort((a, b) => {
-      const comparison = a.name.localeCompare(b.name);
-
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-
-    return sorted;
-  }, [users, search, roleFilter, statusFilter, sortOrder]);
+    sortOrder,
+    setSortOrder,
+filteredUsers,
+    paginatedUsers,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    resetFilters,
+    hasActiveFilters
+  } = useUsersFilter(users);
 
   return (
     <div className="space-y-6">
@@ -55,54 +46,21 @@ export function UsersPage() {
           Manage users, roles, subscription plans, and account status.
         </p>
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search users..."
-            className="pl-10"
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <select
-            value={roleFilter}
-            onChange={(event) => setRoleFilter(event.target.value)}
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-          >
-            <option value="all">All roles</option>
-            <option value="Admin">Admin</option>
-            <option value="Manager">Manager</option>
-            <option value="Member">Member</option>
-          </select>
-          <select
-            value={statusFilter}
-            onChange={(event) => setStatusFilter(event.target.value)}
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-          >
-            <option value="all">All status</option>
-            <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-          <select
-            value={sortOrder}
-            onChange={(event) =>
-              setSortOrder(
-                event.target.value as "asc" | "desc"
-              )
-            }
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-          >
-            <option value="asc">Name A-Z</option>
-            <option value="desc">Name Z-A</option>
-          </select>
-        </div>
-      </div>
-
+      <UsersToolbar
+        search={search}
+        onSearchChange={setSearch}
+        roleFilter={roleFilter}
+        onRoleFilterChange={setRoleFilter}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        sortOrder={sortOrder}
+        onResetFilters={resetFilters}
+        onSortOrderChange={setSortOrder}
+        hasActiveFilters={hasActiveFilters}
+      />
+<p className="text-sm text-slate-600 dark:text-slate-400">
+  Showing {paginatedUsers.length} of {filteredUsers.length} users
+</p>
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -116,14 +74,27 @@ export function UsersPage() {
         <div className="overflow-x-auto">
           {isLoading ? (
             <UsersTableSkeleton />
-          ) : filteredUsers.length === 0 ? (
-            <EmptyState
-              icon={<Users className="h-6 w-6" />}
-              title="No users found"
-              description="Try adjusting your search or filter criteria."
+          ) : isError ? (
+            <div className="p-6">
+              <ErrorState
+                title="Failed to load users"
+                description="Please refresh the page or try again later."
+              />
+            </div>) : paginatedUsers.length === 0 ? (
+              <EmptyState
+                icon={<Users className="h-6 w-6" />}
+                title="No users found"
+                description="Try adjusting your search or filter criteria."
+              />
+            ) : (
+            <UsersTable users={paginatedUsers} />
+          )}
+          {!isLoading && paginatedUsers.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
             />
-          ) : (
-            <UsersTable users={filteredUsers} />
           )}
         </div>
       </div>
