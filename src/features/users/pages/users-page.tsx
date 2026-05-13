@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { StatusBadge } from "../../../components/ui/status-badge";
 import { getUsers } from "../../../services/users-service";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
+import { EmptyState } from "../../../components/ui/empty-state";
+import { Users } from "lucide-react";
 
 export function UsersPage() {
   const { data: users = [], isLoading } = useQuery({
@@ -34,7 +36,12 @@ export function UsersPage() {
         <div className="overflow-x-auto">
           {isLoading ? (
             <UsersTableSkeleton />
-          ) : (
+          ) : users.length === 0 ? (
+            <EmptyState
+              icon={<Users className="h-6 w-6" />}
+              title="No users found"
+              description="Once users join your workspace, they will appear here."
+            /> ) : (
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-400">
                 <tr>
