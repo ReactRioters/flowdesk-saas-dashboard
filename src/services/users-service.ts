@@ -9,7 +9,10 @@ export type User = {
   plan: "Free" | "Starter" | "Pro" | "Business";
 };
 
+
 export async function getUsers(): Promise<User[]> {
+  // fake dealay to simulate network request
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return Promise.resolve([
     {
       id: "1",

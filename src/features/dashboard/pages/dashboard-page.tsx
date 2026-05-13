@@ -11,6 +11,7 @@ import { getDashboardStats } from "../../../services/dashboard-service";
 import { StatCard } from "../components/stat-card";
 import { RecentActivity } from "../components/recent-activity";
 import { RevenueChart } from "../components/revenue-chart";
+import { StatCardSkeleton } from "../components/stat-card-skeleton";
 
 const statIcons = {
   revenue: DollarSign,
@@ -42,9 +43,11 @@ export function DashboardPage() {
         description="Key SaaS growth indicators and performance tracking."
       >
         {isLoading ? (
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Loading metrics...
-          </p>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <StatCardSkeleton key={index} />
+            ))}
+          </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => (

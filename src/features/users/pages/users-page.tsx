@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { StatusBadge } from "../../../components/ui/status-badge";
 import { getUsers } from "../../../services/users-service";
+import { UsersTableSkeleton } from "../components/users-table-skeleton";
 
 export function UsersPage() {
   const { data: users = [], isLoading } = useQuery({
@@ -32,9 +33,7 @@ export function UsersPage() {
 
         <div className="overflow-x-auto">
           {isLoading ? (
-            <p className="p-6 text-sm text-slate-600 dark:text-slate-400">
-              Loading users...
-            </p>
+            <UsersTableSkeleton />
           ) : (
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-400">

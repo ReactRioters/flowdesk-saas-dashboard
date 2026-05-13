@@ -7,6 +7,8 @@ export type DashboardStat = {
 };
 
 export async function getDashboardStats(): Promise<DashboardStat[]> {
+   // fake dealay to simulate network request
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return Promise.resolve([
     {
       title: "Total Revenue",
