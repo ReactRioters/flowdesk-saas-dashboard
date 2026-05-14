@@ -7,6 +7,7 @@ type DeleteUserModalProps = {
   user: User | null;
   onClose: () => void;
   onConfirm: (userId: string) => void;
+  isLoading?: boolean;
 };
 
 export function DeleteUserModal({
@@ -14,6 +15,7 @@ export function DeleteUserModal({
   user,
   onClose,
   onConfirm,
+  isLoading = false,
 }: DeleteUserModalProps) {
   if (!user) return null;
 
@@ -40,9 +42,10 @@ export function DeleteUserModal({
           <Button
             type="button"
             onClick={() => onConfirm(user.id)}
+            disabled={isLoading}
             className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:text-white dark:hover:bg-red-700"
           >
-            Delete
+            {isLoading ? "Deleting..." : "Delete"}
           </Button>
         </div>
       </div>

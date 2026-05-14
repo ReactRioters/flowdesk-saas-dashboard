@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -12,22 +14,32 @@ type EditUserModalProps = {
     user: User | null;
     onClose: () => void;
     onSave: (user: User) => void;
+    isLoading?: boolean;
 };
 
-type EditUserFormValues = {
-    name: string;
-    email: string;
-    role: User["role"];
-};
+const editUserSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().min(1, "Email is required").email("Enter a valid email"),
+    role: z.enum(["Admin", "Manager", "Member"]),
+});
+
+type EditUserFormValues = z.infer<typeof editUserSchema>;
 
 export function EditUserModal({
     open,
     user,
     onClose,
     onSave,
+    isLoading = false,
 }: EditUserModalProps) {
-    const { register, handleSubmit, reset } =
-        useForm<EditUserFormValues>();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<EditUserFormValues>({
+        resolver: zodResolver(editUserSchema),
+    });
 
     useEffect(() => {
         if (user) {
@@ -40,6 +52,8 @@ export function EditUserModal({
     }, [user, reset]);
 
     const onSubmit = (values: EditUserFormValues) => {
+        if (!user) return;
+
         onSave({
             ...user,
             ...values,
@@ -57,6 +71,9 @@ export function EditUserModal({
                         Name
                     </label>
                     <Input {...register("name")} className="mt-2" />
+                    {errors.name && (
+                        <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+                    )}
                 </div>
 
                 <div>
@@ -64,6 +81,9 @@ export function EditUserModal({
                         Email
                     </label>
                     <Input {...register("email")} className="mt-2" />
+                    {errors.email && (
+                        <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+                    )}
                 </div>
 
                 <div>
@@ -75,6 +95,9 @@ export function EditUserModal({
                         <option value="Manager">Manager</option>
                         <option value="Member">Member</option>
                     </Select>
+                    {errors.role && (
+                        <p className="mt-1 text-sm text-red-500">{errors.role.message}</p>
+                    )}
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
@@ -86,7 +109,9 @@ export function EditUserModal({
                         Cancel
                     </Button>
 
-                    <Button type="submit">Save Changes</Button>
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? "Saving..." : "Save Changes"}
+                    </Button>
                 </div>
             </form>
         </Modal>

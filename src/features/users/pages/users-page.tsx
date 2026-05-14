@@ -58,6 +58,9 @@ export function UsersPage() {
       setSelectedUser(null);
       toast.success("User updated successfully");
     },
+    onError: () => {
+      toast.error("Failed to update user");
+    },
   });
 
   const deleteUserMutation = useMutation({
@@ -69,6 +72,9 @@ export function UsersPage() {
 
       setUserToDelete(null);
       toast.success("User deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete user");
     },
   });
 
@@ -150,12 +156,14 @@ export function UsersPage() {
         user={selectedUser}
         onClose={() => setSelectedUser(null)}
         onSave={handleUpdateUser}
+        isLoading={updateUserMutation.isPending}
       />
       <DeleteUserModal
         open={!!userToDelete}
         user={userToDelete}
         onClose={() => setUserToDelete(null)}
         onConfirm={handleDeleteUser}
+        isLoading={deleteUserMutation.isPending}
       />
     </div>
   );
