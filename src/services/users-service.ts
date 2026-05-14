@@ -104,3 +104,13 @@ export async function getUsers(): Promise<User[]> {
     }
   ]);
 }
+
+export async function updateUser(user: User): Promise<User> {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return user;
+}
+
+export async function deleteUser(userId: string): Promise<string> {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return userId;
+}

@@ -7,12 +7,14 @@ import "./index.css";
 import { ThemeProvider } from "./app/providers/theme-provider";
 import { appRoutes } from "./app/routes/app-routes";
 import { QueryProvider } from "./app/providers/query-provider";
+import { Toaster } from "sonner";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <QueryProvider>
-      <RouterProvider router={appRoutes} />
+        <RouterProvider router={appRoutes} />
+        <Toaster richColors position="top-right" />
       </QueryProvider>
     </ThemeProvider>
   </StrictMode>

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getUsers, type User } from "../../../services/users-service";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteUser, getUsers, updateUser, type User } from "../../../services/users-service";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { Users } from "lucide-react";
@@ -11,6 +11,7 @@ import { ErrorState } from "../../../components/ui/error-state";
 import { useEffect, useState } from "react";
 import { EditUserModal } from "../components/edit-user-modal";
 import { DeleteUserModal } from "../components/delete-user-modal";
+import { toast } from "sonner";
 
 export function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -45,26 +46,38 @@ export function UsersPage() {
     setLocalUsers(users);
   }, [users]);
 
-  const handleUpdateUser = (
-    updatedUser: User
-  ) => {
-    setLocalUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === updatedUser.id
-          ? updatedUser
-          : user
-      )
-    );
+  const updateUserMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: (updatedUser) => {
+      setLocalUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user
+        )
+      );
 
-    setSelectedUser(null);
+      setSelectedUser(null);
+      toast.success("User updated successfully");
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (deletedUserId) => {
+      setLocalUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== deletedUserId)
+      );
+
+      setUserToDelete(null);
+      toast.success("User deleted successfully");
+    },
+  });
+
+  const handleUpdateUser = (updatedUser: User) => {
+    updateUserMutation.mutate(updatedUser);
   };
 
   const handleDeleteUser = (userId: string) => {
-    setLocalUsers((prevUsers) =>
-      prevUsers.filter((user) => user.id !== userId)
-    );
-
-    setUserToDelete(null);
+    deleteUserMutation.mutate(userId);
   };
 
   return (
