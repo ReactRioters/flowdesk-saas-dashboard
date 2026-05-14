@@ -5,6 +5,8 @@ import { Button } from "../../../components/ui/button";
 import { Modal } from "../../../components/ui/modal";
 import { Select } from "../../../components/ui/select";
 import type { Subscription } from "../../../services/billing-service";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 type ChangePlanModalProps = {
   open: boolean;
@@ -14,9 +16,11 @@ type ChangePlanModalProps = {
   isLoading: boolean;
 };
 
-type ChangePlanFormValues = {
-  plan: Subscription["plan"];
-};
+const changePlanSchema = z.object({
+  plan: z.enum(["Free", "Starter", "Pro", "Business"]),
+});
+
+type ChangePlanFormValues = z.infer<typeof changePlanSchema>;
 
 const planAmounts: Record<Subscription["plan"], string> = {
   Free: "$0/mo",
@@ -32,7 +36,14 @@ export function ChangePlanModal({
   onSave,
   isLoading,
 }: ChangePlanModalProps & { isLoading: boolean }) {
-  const { register, handleSubmit, reset } = useForm<ChangePlanFormValues>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ChangePlanFormValues>({
+    resolver: zodResolver(changePlanSchema),
+  });
 
   useEffect(() => {
     if (subscription) {
@@ -77,6 +88,11 @@ export function ChangePlanModal({
             <option value="Pro">Pro</option>
             <option value="Business">Business</option>
           </Select>
+          {errors.plan && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.plan.message}
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
