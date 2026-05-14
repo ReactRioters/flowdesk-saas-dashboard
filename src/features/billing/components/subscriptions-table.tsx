@@ -1,15 +1,20 @@
 import { StatusBadge } from "../../../components/ui/status-badge";
 import type { Subscription } from "../../../services/billing-service";
+import { SubscriptionRowActions } from "./subscription-row-actions";
 
 type SubscriptionsTableProps = {
   subscriptions: Subscription[];
+  onChangePlan: (subscription: Subscription) => void;
+  onCancelSubscription: (subscription: Subscription) => void;
 };
 
 export function SubscriptionsTable({
   subscriptions,
+  onChangePlan,
+  onCancelSubscription,
 }: SubscriptionsTableProps) {
   return (
-    <table className="w-full min-w-[820px] text-left text-sm">
+    <table className="w-full min-w-[920px] text-left text-sm">
       <thead className="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-400">
         <tr>
           <th className="px-6 py-3 font-medium">Customer</th>
@@ -17,6 +22,7 @@ export function SubscriptionsTable({
           <th className="px-6 py-3 font-medium">Status</th>
           <th className="px-6 py-3 font-medium">Amount</th>
           <th className="px-6 py-3 font-medium">Renewal Date</th>
+          <th className="px-6 py-3 font-medium">Actions</th>
         </tr>
       </thead>
 
@@ -50,6 +56,13 @@ export function SubscriptionsTable({
 
             <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
               {subscription.renewalDate}
+            </td>
+
+            <td className="px-6 py-4">
+              <SubscriptionRowActions
+                onChangePlan={() => onChangePlan(subscription)}
+                onCancel={() => onCancelSubscription(subscription)}
+              />
             </td>
           </tr>
         ))}

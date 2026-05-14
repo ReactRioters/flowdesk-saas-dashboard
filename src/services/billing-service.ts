@@ -70,3 +70,22 @@ export async function getSubscriptions(): Promise<Subscription[]> {
     }
   ];
 }
+
+export async function updateSubscription(
+  subscription: Subscription
+): Promise<Subscription> {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return subscription;
+}
+
+export async function cancelSubscription(
+  subscription: Subscription
+): Promise<Subscription> {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  return {
+    ...subscription,
+    status: "Cancelled",
+    amount: "$0/mo",
+  };
+}

@@ -1,14 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { CreditCard } from "lucide-react";
+import { toast } from "sonner";
 
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
-import { getSubscriptions } from "../../../services/billing-service";
-import { SubscriptionsTableSkeleton } from "../components/subscriptions-table-skeleton";
+import { Pagination } from "../../../components/ui/pagination";
+import {
+  cancelSubscription,
+  getSubscriptions,
+  updateSubscription,
+  type Subscription,
+} from "../../../services/billing-service";
+import { ChangePlanModal } from "../components/change-plan-modal";
 import { SubscriptionsTable } from "../components/subscriptions-table";
+import { SubscriptionsTableSkeleton } from "../components/subscriptions-table-skeleton";
 import { SubscriptionsToolbar } from "../components/subscriptions-toolbar";
 import { useSubscriptionsFilter } from "../hooks/use-subscriptions-filter";
-import { Pagination } from "../../../components/ui/pagination";
+import { CancelSubscriptionModal } from "../components/cancel-subscription-modal";
 
 export function BillingPage() {
   const {
@@ -19,22 +28,92 @@ export function BillingPage() {
     queryKey: ["subscriptions"],
     queryFn: getSubscriptions,
   });
+
+  const [localSubscriptions, setLocalSubscriptions] =
+    useState<Subscription[]>(subscriptions);
+
+  const [selectedSubscription, setSelectedSubscription] =
+    useState<Subscription | null>(null);
+
+  const [
+    subscriptionToCancel,
+    setSubscriptionToCancel,
+  ] = useState<Subscription | null>(null);
+
+  useEffect(() => {
+    setLocalSubscriptions(subscriptions);
+  }, [subscriptions]);
+
   const {
     search,
     setSearch,
+
     planFilter,
     setPlanFilter,
+
     statusFilter,
     setStatusFilter,
+
     currentPage,
     setCurrentPage,
+
     totalPages,
     filteredSubscriptions,
     paginatedSubscriptions,
+
     hasActiveFilters,
     resetFilters,
-  } = useSubscriptionsFilter(subscriptions);
+  } = useSubscriptionsFilter(localSubscriptions);
 
+  const updateSubscriptionMutation = useMutation({
+    mutationFn: updateSubscription,
+    onSuccess: (updatedSubscription) => {
+      setLocalSubscriptions((prev) =>
+        prev.map((item) =>
+          item.id === updatedSubscription.id ? updatedSubscription : item
+        )
+      );
+
+      setSelectedSubscription(null);
+      toast.success("Subscription plan updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update subscription plan");
+    },
+  });
+
+  const cancelSubscriptionMutation = useMutation({
+    mutationFn: cancelSubscription,
+    onSuccess: (cancelledSubscription) => {
+      setLocalSubscriptions((prev) =>
+        prev.map((item) =>
+          item.id === cancelledSubscription.id ? cancelledSubscription : item
+        )
+      );
+
+      setSubscriptionToCancel(null);
+      toast.success("Subscription cancelled successfully");
+    },
+    onError: () => {
+      toast.error("Failed to cancel subscription");
+    },
+  });
+
+  const handleChangePlan = (subscription: Subscription) => {
+    setSelectedSubscription(subscription);
+  };
+
+  const handleSavePlan = (updatedSubscription: Subscription) => {
+    updateSubscriptionMutation.mutate(updatedSubscription);
+  };
+
+  const handleCancelSubscription = (subscription: Subscription) => {
+    setSubscriptionToCancel(subscription);
+  };
+
+  const handleConfirmCancelSubscription = (subscription: Subscription) => {
+    cancelSubscriptionMutation.mutate(subscription);
+  };
   return (
     <div className="space-y-6">
       <div>
@@ -58,7 +137,8 @@ export function BillingPage() {
       />
 
       <p className="text-sm text-slate-600 dark:text-slate-400">
-        Showing {paginatedSubscriptions.length} of {filteredSubscriptions.length} subscriptions
+        Showing {paginatedSubscriptions.length} of{" "}
+        {filteredSubscriptions.length} subscriptions
       </p>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
@@ -85,11 +165,16 @@ export function BillingPage() {
             <EmptyState
               icon={<CreditCard className="h-6 w-6" />}
               title="No subscriptions found"
-              description="Subscriptions will appear here once customers choose a plan."
+              description="Try adjusting your search or filter criteria."
             />
           ) : (
-            <SubscriptionsTable subscriptions={paginatedSubscriptions} />
+            <SubscriptionsTable
+              subscriptions={paginatedSubscriptions}
+              onChangePlan={handleChangePlan}
+              onCancelSubscription={handleCancelSubscription}
+            />
           )}
+
           {!isLoading && paginatedSubscriptions.length > 0 && (
             <Pagination
               currentPage={currentPage}
@@ -99,6 +184,25 @@ export function BillingPage() {
           )}
         </div>
       </div>
+
+      <ChangePlanModal
+        open={!!selectedSubscription}
+        subscription={selectedSubscription}
+        onClose={() => setSelectedSubscription(null)}
+        onSave={handleSavePlan}
+        isLoading={updateSubscriptionMutation.isPending}
+      />
+      <CancelSubscriptionModal
+        open={!!subscriptionToCancel}
+        subscription={subscriptionToCancel}
+        onClose={() =>
+          setSubscriptionToCancel(null)
+        }
+        onConfirm={
+          handleConfirmCancelSubscription
+        }
+        isLoading={cancelSubscriptionMutation.isPending}
+      />
     </div>
   );
 }
