@@ -3,6 +3,7 @@ import { useThemeStore } from "../../store/theme-store";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth-store";
 import { NotificationsDropdown } from "./notifications-dropdown";
+import { UserMenu } from "./user-menu";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -60,13 +61,7 @@ export function Header({
 
          <NotificationsDropdown />
 
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
+          <UserMenu />
         </div>
       </div>
     </header>
