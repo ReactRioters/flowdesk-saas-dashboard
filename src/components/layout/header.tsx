@@ -2,6 +2,7 @@ import { Bell, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
 import { useThemeStore } from "../../store/theme-store";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth-store";
+import { NotificationsDropdown } from "./notifications-dropdown";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -57,9 +58,7 @@ export function Header({
             )}
           </button>
 
-          <button className="rounded-xl border border-gray-300 bg-white p-2 text-slate-400 hover:text-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-600">
-            <Bell className="h-5 w-5" />
-          </button>
+         <NotificationsDropdown />
 
           <button
             onClick={handleLogout}
