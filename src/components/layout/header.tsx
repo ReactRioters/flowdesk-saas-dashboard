@@ -1,18 +1,16 @@
-import { Menu, Moon, Sun } from "lucide-react";
-import { useThemeStore } from "../../store/theme-store";
+import { Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
+
+import { ThemeToggle } from "../ui/theme-toggle";
+import { GlobalSearch } from "./global-search";
 import { NotificationsDropdown } from "./notifications-dropdown";
 import { UserMenu } from "./user-menu";
-import { GlobalSearch } from "./global-search";
 
 type HeaderProps = {
-  onMenuClick: () => void;
+  onOpenSidebar: () => void;
 };
 
-export function Header({
-  onMenuClick,
-}: HeaderProps) {
-  const { theme, toggleTheme } = useThemeStore();
+export function Header({ onOpenSidebar }: HeaderProps) {
   const location = useLocation();
 
   const pageTitleMap: Record<string, string> = {
@@ -26,27 +24,48 @@ export function Header({
   const pageDescriptionMap: Record<string, string> = {
     "/": "Monitor your SaaS performance and activity.",
     "/users": "Manage users, roles, and account access.",
-    "/billing": "Manage subscriptions, plans, and billing activity.",
-    "/analytics": "Track product growth and performance insights.",
-    "/settings": "Manage application preferences and account settings.",
+    "/billing":
+      "Manage subscriptions, plans, and billing activity.",
+    "/analytics":
+      "Track product growth and performance insights.",
+    "/settings":
+      "Manage application preferences and account settings.",
   };
 
-  const title = pageTitleMap[location.pathname] || "Dashboard";
+  const title =
+    pageTitleMap[location.pathname] || "Dashboard";
+
   const description =
     pageDescriptionMap[location.pathname] ||
     "Monitor your SaaS performance and activity.";
+
   return (
-    <header className="sticky top-0 z-30 border-b border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
+      <div className="flex h-16 items-center justify-between px-4 lg:px-6">
+        <div className="flex items-center gap-4">
           <button
-            onClick={onMenuClick}
-            className="rounded-xl border border-slate-800 bg-slate-900 p-2 text-slate-300 lg:hidden"
+            type="button"
+            onClick={onOpenSidebar}
+            className="rounded-xl border border-slate-200 p-2 text-slate-500 hover:bg-slate-100 lg:hidden dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
           >
             <Menu className="h-5 w-5" />
           </button>
 
           <div>
+            <nav className="text-xs text-slate-500 dark:text-slate-400">
+              <span>Dashboard</span>
+
+              {location.pathname !== "/" && (
+                <>
+                  <span className="mx-2">/</span>
+
+                  <span className="text-slate-700 dark:text-slate-300">
+                    {title}
+                  </span>
+                </>
+              )}
+            </nav>
+
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               {title}
             </h2>
@@ -60,18 +79,9 @@ export function Header({
         <div className="flex items-center gap-3">
           <GlobalSearch />
 
-          <button
-            onClick={toggleTheme}
-            className="rounded-xl border border-gray-300 bg-white p-2 text-slate-400 hover:text-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-600"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </button>
-
           <NotificationsDropdown />
+
+          <ThemeToggle />
 
           <UserMenu />
         </div>
