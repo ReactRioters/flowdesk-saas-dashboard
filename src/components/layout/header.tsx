@@ -1,7 +1,6 @@
-import { Bell, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { useThemeStore } from "../../store/theme-store";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/auth-store";
+import { useLocation } from "react-router-dom";
 import { NotificationsDropdown } from "./notifications-dropdown";
 import { UserMenu } from "./user-menu";
 import { GlobalSearch } from "./global-search";
@@ -14,13 +13,28 @@ export function Header({
   onMenuClick,
 }: HeaderProps) {
   const { theme, toggleTheme } = useThemeStore();
-  const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.logout);
+  const location = useLocation();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const pageTitleMap: Record<string, string> = {
+    "/": "Dashboard",
+    "/users": "Users",
+    "/billing": "Billing",
+    "/analytics": "Analytics",
+    "/settings": "Settings",
   };
+
+  const pageDescriptionMap: Record<string, string> = {
+    "/": "Monitor your SaaS performance and activity.",
+    "/users": "Manage users, roles, and account access.",
+    "/billing": "Manage subscriptions, plans, and billing activity.",
+    "/analytics": "Track product growth and performance insights.",
+    "/settings": "Manage application preferences and account settings.",
+  };
+
+  const title = pageTitleMap[location.pathname] || "Dashboard";
+  const description =
+    pageDescriptionMap[location.pathname] ||
+    "Monitor your SaaS performance and activity.";
   return (
     <header className="sticky top-0 z-30 border-b border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
       <div className="flex items-center justify-between gap-4">
@@ -34,11 +48,11 @@ export function Header({
 
           <div>
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Dashboard
+              {title}
             </h2>
 
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Monitor your SaaS performance and activity.
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              {description}
             </p>
           </div>
         </div>
@@ -57,7 +71,7 @@ export function Header({
             )}
           </button>
 
-         <NotificationsDropdown />
+          <NotificationsDropdown />
 
           <UserMenu />
         </div>
