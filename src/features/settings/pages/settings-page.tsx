@@ -1,4 +1,5 @@
 import { Bell, Lock, Palette, User } from "lucide-react";
+import { ProfileSettingsForm } from "../components/profile-settings-form";
 
 const settingsSections = [
   {
@@ -59,6 +60,7 @@ export function SettingsPage() {
           );
         })}
       </div>
+      <ProfileSettingsForm />
     </div>
   );
 }
