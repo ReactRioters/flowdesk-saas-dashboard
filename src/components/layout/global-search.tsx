@@ -34,7 +34,7 @@ export function GlobalSearch() {
   const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const hasSearch = search.trim().length > 0;
 
   const results = useMemo(() => {
@@ -66,12 +66,24 @@ export function GlobalSearch() {
       }
     }
 
+    function handleShortcut(event: KeyboardEvent) {
+      const isK = event.key.toLowerCase() === "k";
+
+      if ((event.ctrlKey || event.metaKey) && isK) {
+        event.preventDefault();
+
+        inputRef.current?.focus();
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleShortcut);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleShortcut);
     };
   }, []);
 
@@ -85,6 +97,7 @@ export function GlobalSearch() {
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
       <input
+        ref={inputRef}
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Search pages..."
