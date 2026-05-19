@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { FormField } from "../../../components/ui/form-field";
 
 const profileSchema = z.object({
     fullName: z.string().min(1, "Full name is required"),
@@ -45,41 +46,17 @@ export function ProfileSettingsForm() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Full Name
-                    </label>
-                    <Input {...register("fullName")} className="mt-2" />
-                    {errors.fullName && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.fullName.message}
-                        </p>
-                    )}
-                </div>
+                <FormField label="Full Name" error={errors.fullName?.message}>
+                    <Input {...register("fullName")} />
+                </FormField>
 
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Email
-                    </label>
-                    <Input {...register("email")} className="mt-2" />
-                    {errors.email && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.email.message}
-                        </p>
-                    )}
-                </div>
+                <FormField label="Email" error={errors.email?.message}>
+                    <Input {...register("email")} />
+                </FormField>
 
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Company
-                    </label>
-                    <Input {...register("company")} className="mt-2" />
-                    {errors.company && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.company.message}
-                        </p>
-                    )}
-                </div>
+                <FormField label="Company" error={errors.company?.message}>
+                    <Input {...register("company")} />
+                </FormField>
 
                 <Button type="submit">Save Changes</Button>
             </form>
