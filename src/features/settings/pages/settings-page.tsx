@@ -5,6 +5,7 @@ import { Tabs } from "../../../components/ui/tabs";
 import { AppearanceSettings } from "../components/appearance-settings";
 import { NotificationSettings } from "../components/notification-settings";
 import { SecuritySettings } from "../components/security-settings";
+import { PageHeader } from "../../../components/ui/page-header";
 
 const settingsSections = [
   {
@@ -43,14 +44,10 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Settings
-        </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Manage account preferences, security, notifications, and appearance.
-        </p>
-      </div>
+      <PageHeader
+        title="Settings"
+        description="Manage account preferences, security, notifications, and appearance."
+      />
 
       <Tabs
         tabs={tabs}

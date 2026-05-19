@@ -18,6 +18,7 @@ import { SubscriptionsTableSkeleton } from "../components/subscriptions-table-sk
 import { SubscriptionsToolbar } from "../components/subscriptions-toolbar";
 import { useSubscriptionsFilter } from "../hooks/use-subscriptions-filter";
 import { CancelSubscriptionModal } from "../components/cancel-subscription-modal";
+import { PageHeader } from "../../../components/ui/page-header";
 
 export function BillingPage() {
   const {
@@ -116,14 +117,10 @@ export function BillingPage() {
   };
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Billing
-        </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Manage customer plans, subscription status, and billing activity.
-        </p>
-      </div>
+      <PageHeader
+        title="Billing"
+        description="Manage customer plans, subscription status, and billing activity."
+      />
 
       <SubscriptionsToolbar
         search={search}

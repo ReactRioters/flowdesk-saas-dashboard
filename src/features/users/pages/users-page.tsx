@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { EditUserModal } from "../components/edit-user-modal";
 import { DeleteUserModal } from "../components/delete-user-modal";
 import { toast } from "sonner";
+import { PageHeader } from "../../../components/ui/page-header";
 
 export function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -88,14 +89,10 @@ export function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Users
-        </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Manage users, roles, subscription plans, and account status.
-        </p>
-      </div>
+      <PageHeader
+        title="Users"
+        description="Manage users, roles, and account status."
+      />
       <UsersToolbar
         search={search}
         onSearchChange={setSearch}
