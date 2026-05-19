@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { FormField } from "../../../components/ui/form-field";
 
 const securitySchema = z
     .object({
@@ -54,42 +55,26 @@ export function SecuritySettings() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Current Password
-                    </label>
-                    <Input type="password" {...register("currentPassword")} className="mt-2" />
-                    {errors.currentPassword && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.currentPassword.message}
-                        </p>
-                    )}
-                </div>
+                <FormField
+                    label="Current Password"
+                    error={errors.currentPassword?.message}
+                >
+                    <Input type="password" {...register("currentPassword")} />
+                </FormField>
 
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        New Password
-                    </label>
-                    <Input type="password" {...register("newPassword")} className="mt-2" />
-                    {errors.newPassword && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.newPassword.message}
-                        </p>
-                    )}
-                </div>
+                <FormField
+                    label="New Password"
+                    error={errors.newPassword?.message}
+                >
+                    <Input type="password" {...register("newPassword")} />
+                </FormField>
 
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Confirm Password
-                    </label>
-                    <Input type="password" {...register("confirmPassword")} className="mt-2" />
-                    {errors.confirmPassword && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.confirmPassword.message}
-                        </p>
-                    )}
-                </div>
-
+                <FormField
+                    label="Confirm Password"
+                    error={errors.confirmPassword?.message}
+                >
+                    <Input type="password" {...register("confirmPassword")} />
+                </FormField>
                 <Button type="submit">Update Password</Button>
             </form>
         </div>

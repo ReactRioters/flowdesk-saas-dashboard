@@ -8,6 +8,8 @@ import { Input } from "../../../components/ui/input";
 import { Modal } from "../../../components/ui/modal";
 import { Select } from "../../../components/ui/select";
 import type { User } from "../../../services/users-service";
+import { Form } from "react-router-dom";
+import { FormField } from "../../../components/ui/form-field";
 
 type EditUserModalProps = {
     open: boolean;
@@ -66,40 +68,21 @@ export function EditUserModal({
     return (
         <Modal open={open} title="Edit User" onClose={onClose}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Name
-                    </label>
-                    <Input {...register("name")} className="mt-2" />
-                    {errors.name && (
-                        <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
-                    )}
-                </div>
+                <FormField label="Name" error={errors.name?.message}>
+                    <Input {...register("name")} />
+                </FormField>
 
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Email
-                    </label>
-                    <Input {...register("email")} className="mt-2" />
-                    {errors.email && (
-                        <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-                    )}
-                </div>
+                <FormField label="Email" error={errors.email?.message}>
+                    <Input {...register("email")} />
+                </FormField>
 
-                <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Role
-                    </label>
+                <FormField label="Role" error={errors.role?.message}>
                     <Select {...register("role")} className="mt-2 w-full">
                         <option value="Admin">Admin</option>
                         <option value="Manager">Manager</option>
                         <option value="Member">Member</option>
                     </Select>
-                    {errors.role && (
-                        <p className="mt-1 text-sm text-red-500">{errors.role.message}</p>
-                    )}
-                </div>
-
+                </FormField>
                 <div className="flex justify-end gap-3 pt-4">
                     <Button
                         type="button"

@@ -7,6 +7,7 @@ import { Select } from "../../../components/ui/select";
 import type { Subscription } from "../../../services/billing-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { FormField } from "../../../components/ui/form-field";
 
 type ChangePlanModalProps = {
   open: boolean;
@@ -77,23 +78,14 @@ export function ChangePlanModal({
           </p>
         </div>
 
-        <div>
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Plan
-          </label>
-
+        <FormField label="Plan" error={errors.plan?.message}>
           <Select {...register("plan")} className="mt-2 w-full">
             <option value="Free">Free</option>
             <option value="Starter">Starter</option>
             <option value="Pro">Pro</option>
             <option value="Business">Business</option>
           </Select>
-          {errors.plan && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.plan.message}
-            </p>
-          )}
-        </div>
+        </FormField>
 
         <div className="flex justify-end gap-3 pt-4">
           <Button
