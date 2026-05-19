@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { FormField } from "../../../components/ui/form-field";
+import { SettingsSection } from "../../../components/ui/settings-section";
 
 const securitySchema = z
     .object({
@@ -38,21 +39,10 @@ export function SecuritySettings() {
     };
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-            <div className="mb-6 flex items-start gap-3">
-                <div className="rounded-xl bg-slate-100 p-2 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                    <Shield className="h-5 w-5" />
-                </div>
-
-                <div>
-                    <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                        Security Settings
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                        Update your password and keep your account secure.
-                    </p>
-                </div>
-            </div>
+        <SettingsSection
+            title="Security Settings"
+            description="Update your password and keep your account secure."
+        >
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <FormField
@@ -77,6 +67,6 @@ export function SecuritySettings() {
                 </FormField>
                 <Button type="submit">Update Password</Button>
             </form>
-        </div>
+        </SettingsSection>
     );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "../../../components/ui/button";
+import { SettingsSection } from "../../../components/ui/settings-section";
 
 const defaultSettings = {
     productUpdates: true,
@@ -26,15 +27,10 @@ export function NotificationSettings() {
     };
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-            <div className="mb-6">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                    Notification Settings
-                </h2>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    Choose which updates you want to receive.
-                </p>
-            </div>
+        <SettingsSection
+            title="Notification Settings"
+            description="Choose which updates you want to receive."
+        >
 
             <div className="space-y-4">
                 {Object.entries(settings).map(([key, value]) => (
@@ -61,6 +57,6 @@ export function NotificationSettings() {
             <Button type="button" onClick={handleSave} className="mt-6">
                 Save Preferences
             </Button>
-        </div>
+        </SettingsSection>
     );
 }

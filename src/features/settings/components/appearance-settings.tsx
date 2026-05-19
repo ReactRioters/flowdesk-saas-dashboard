@@ -2,6 +2,7 @@ import { Moon, Sun } from "lucide-react";
 
 import { Button } from "../../../components/ui/button";
 import { useThemeStore } from "../../../store/theme-store";
+import { SettingsSection } from "../../../components/ui/settings-section";
 
 export function AppearanceSettings() {
     const theme = useThemeStore((state) => state.theme);
@@ -10,8 +11,11 @@ export function AppearanceSettings() {
     const isDark = theme === "dark";
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-            <div className="mb-6">
+        <SettingsSection
+            title="Appearance Settings"
+            description="Customize your dashboard theme preference."
+        >
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                     Appearance Settings
                 </h2>
@@ -40,6 +44,6 @@ export function AppearanceSettings() {
                     Toggle Theme
                 </Button>
             </div>
-        </div>
+        </SettingsSection>
     );
 }

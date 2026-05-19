@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { FormField } from "../../../components/ui/form-field";
+import { SettingsSection } from "../../../components/ui/settings-section";
 
 const profileSchema = z.object({
     fullName: z.string().min(1, "Full name is required"),
@@ -35,15 +36,10 @@ export function ProfileSettingsForm() {
     };
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-            <div className="mb-6">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                    Profile Settings
-                </h2>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    Update your personal information.
-                </p>
-            </div>
+        <SettingsSection
+            title="Profile Settings"
+            description="Update your personal information."
+        >
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <FormField label="Full Name" error={errors.fullName?.message}>
@@ -60,6 +56,6 @@ export function ProfileSettingsForm() {
 
                 <Button type="submit">Save Changes</Button>
             </form>
-        </div>
+        </SettingsSection>
     );
 }
