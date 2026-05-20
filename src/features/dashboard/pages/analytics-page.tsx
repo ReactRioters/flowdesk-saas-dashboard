@@ -6,6 +6,7 @@ import { SectionCard } from "../../../components/ui/section-card";
 import { StatCard } from "../components/stat-card";
 import { BarChart3, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { RevenueChart } from "../components/revenue-chart";
+import { TrafficSourcesChart } from "../components/traffic-sources-chart";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -145,6 +146,12 @@ export function AnalyticsPage() {
         description="Monthly revenue performance overview."
       >
         <RevenueChart data={revenueChartData[timeframe]} />
+      </SectionCard>
+      <SectionCard
+        title="Traffic Sources"
+        description="Breakdown of visitors by acquisition channel."
+      >
+        <TrafficSourcesChart />
       </SectionCard>
     </div>
   );
