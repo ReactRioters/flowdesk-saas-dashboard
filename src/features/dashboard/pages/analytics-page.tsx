@@ -10,6 +10,7 @@ import { TrafficSourcesChart } from "../components/traffic-sources-chart";
 import { AnalyticsInsights } from "../components/analytics-insights";
 import { AnalyticsSkeleton } from "../components/analytics-skeleton";
 import { ActivityFeed } from "../components/activity-feed";
+import { TopPagesTable } from "../components/top-pages-table";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -182,6 +183,12 @@ export function AnalyticsPage() {
         description="Latest workspace and billing events."
       >
         <ActivityFeed />
+      </SectionCard>
+      <SectionCard
+        title="Top Performing Pages"
+        description="Highest traffic and conversion pages."
+      >
+        <TopPagesTable />
       </SectionCard>
     </div>
   );
