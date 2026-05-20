@@ -1,6 +1,6 @@
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -8,26 +8,47 @@ import {
   YAxis,
 } from "recharts";
 
-const revenueData = [
-  { month: "Jan", revenue: 32000 },
-  { month: "Feb", revenue: 36000 },
-  { month: "Mar", revenue: 34000 },
-  { month: "Apr", revenue: 42000 },
-  { month: "May", revenue: 48000 },
-  { month: "Jun", revenue: 52000 },
+const chartData = [
+  { month: "Jan", revenue: 12000 },
+  { month: "Feb", revenue: 18500 },
+  { month: "Mar", revenue: 14200 },
+  { month: "Apr", revenue: 22800 },
+  { month: "May", revenue: 26400 },
+  { month: "Jun", revenue: 31200 },
 ];
 
 export function RevenueChart() {
   return (
-    <div className="h-80">
+    <div className="h-[320px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={revenueData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
+        <BarChart data={chartData}>
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#334155"
+            opacity={0.15}
+          />
+
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12 }}
+          />
+
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12 }}
+          />
+
           <Tooltip />
-          <Area type="monotone" dataKey="revenue" />
-        </AreaChart>
+
+          <Bar
+            dataKey="revenue"
+            radius={[8, 8, 0, 0]}
+          />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

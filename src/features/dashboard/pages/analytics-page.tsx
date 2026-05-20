@@ -5,6 +5,7 @@ import { Select } from "../../../components/ui/select";
 import { SectionCard } from "../../../components/ui/section-card";
 import { StatCard } from "../components/stat-card";
 import { BarChart3, MousePointerClick, TrendingUp, Users } from "lucide-react";
+import { RevenueChart } from "../components/revenue-chart";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -109,6 +110,12 @@ export function AnalyticsPage() {
             />
           ))}
         </div>
+      </SectionCard>
+      <SectionCard
+        title="Revenue Analytics"
+        description="Monthly revenue performance overview."
+      >
+        <RevenueChart />
       </SectionCard>
     </div>
   );
