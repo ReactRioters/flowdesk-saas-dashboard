@@ -21,6 +21,37 @@ const statIcons = {
   churn: TrendingDown,
 };
 
+type Timeframe = "7d" | "30d" | "90d" | "1y";
+
+const revenueChartData = {
+  "7d": [
+    { label: "Mon", revenue: 4200 },
+    { label: "Tue", revenue: 5100 },
+    { label: "Wed", revenue: 4600 },
+    { label: "Thu", revenue: 6200 },
+    { label: "Fri", revenue: 7400 },
+    { label: "Sat", revenue: 6900 },
+    { label: "Sun", revenue: 8200 },
+  ],
+  "30d": [
+    { label: "Week 1", revenue: 18000 },
+    { label: "Week 2", revenue: 22500 },
+    { label: "Week 3", revenue: 24800 },
+    { label: "Week 4", revenue: 31200 },
+  ],
+  "90d": [
+    { label: "Jan", revenue: 62000 },
+    { label: "Feb", revenue: 73500 },
+    { label: "Mar", revenue: 84200 },
+  ],
+  "1y": [
+    { label: "Q1", revenue: 210000 },
+    { label: "Q2", revenue: 248000 },
+    { label: "Q3", revenue: 291000 },
+    { label: "Q4", revenue: 342000 },
+  ],
+};
+
 export function DashboardPage() {
   const { data: stats = [], isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
@@ -64,7 +95,7 @@ export function DashboardPage() {
         title="Revenue Overview"
         description="Monthly recurring revenue growth over the last 6 months."
       >
-        <RevenueChart />
+        <RevenueChart data={revenueChartData["30d"]} />
       </SectionCard>
 
       <SectionCard

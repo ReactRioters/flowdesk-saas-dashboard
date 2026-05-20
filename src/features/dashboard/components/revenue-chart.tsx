@@ -8,20 +8,18 @@ import {
   YAxis,
 } from "recharts";
 
-const chartData = [
-  { month: "Jan", revenue: 12000 },
-  { month: "Feb", revenue: 18500 },
-  { month: "Mar", revenue: 14200 },
-  { month: "Apr", revenue: 22800 },
-  { month: "May", revenue: 26400 },
-  { month: "Jun", revenue: 31200 },
-];
+type RevenueChartProps = {
+  data: {
+    label: string;
+    revenue: number;
+  }[];
+};
 
-export function RevenueChart() {
+export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <div className="h-[320px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={chartData}>
+        <BarChart data={data}>
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
@@ -29,12 +27,7 @@ export function RevenueChart() {
             opacity={0.15}
           />
 
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 12 }}
-          />
+          <XAxis dataKey="label" />
 
           <YAxis
             tickLine={false}
