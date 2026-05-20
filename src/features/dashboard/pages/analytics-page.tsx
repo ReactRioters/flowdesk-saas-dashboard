@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { PageHeader } from "../../../components/ui/page-header";
 import { Select } from "../../../components/ui/select";
@@ -8,6 +8,7 @@ import { BarChart3, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { RevenueChart } from "../components/revenue-chart";
 import { TrafficSourcesChart } from "../components/traffic-sources-chart";
 import { AnalyticsInsights } from "../components/analytics-insights";
+import { AnalyticsSkeleton } from "../components/analytics-skeleton";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -69,7 +70,15 @@ const analyticsData = {
 
 export function AnalyticsPage() {
   const [timeframe, setTimeframe] = useState<Timeframe>("30d");
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
   const stats = useMemo(() => {
     const data = analyticsData[timeframe];
 
@@ -104,6 +113,10 @@ export function AnalyticsPage() {
       },
     ] as const;
   }, [timeframe]);
+
+  if (loading) {
+    return <AnalyticsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">
