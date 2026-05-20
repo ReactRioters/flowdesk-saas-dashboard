@@ -7,6 +7,7 @@ import { StatCard } from "../components/stat-card";
 import { BarChart3, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { RevenueChart } from "../components/revenue-chart";
 import { TrafficSourcesChart } from "../components/traffic-sources-chart";
+import { AnalyticsInsights } from "../components/analytics-insights";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -152,6 +153,12 @@ export function AnalyticsPage() {
         description="Breakdown of visitors by acquisition channel."
       >
         <TrafficSourcesChart />
+      </SectionCard>
+      <SectionCard
+        title="Key Insights"
+        description="Actionable observations based on current analytics data."
+      >
+        <AnalyticsInsights />
       </SectionCard>
     </div>
   );
