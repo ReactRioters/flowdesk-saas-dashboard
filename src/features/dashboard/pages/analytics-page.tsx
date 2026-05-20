@@ -9,6 +9,7 @@ import { RevenueChart } from "../components/revenue-chart";
 import { TrafficSourcesChart } from "../components/traffic-sources-chart";
 import { AnalyticsInsights } from "../components/analytics-insights";
 import { AnalyticsSkeleton } from "../components/analytics-skeleton";
+import { ActivityFeed } from "../components/activity-feed";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -175,6 +176,12 @@ export function AnalyticsPage() {
         description="Actionable observations based on current analytics data."
       >
         <AnalyticsInsights />
+      </SectionCard>
+      <SectionCard
+        title="Recent Activity"
+        description="Latest workspace and billing events."
+      >
+        <ActivityFeed />
       </SectionCard>
     </div>
   );
