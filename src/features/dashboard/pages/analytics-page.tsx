@@ -142,18 +142,21 @@ export function AnalyticsPage() {
           ))}
         </div>
       </SectionCard>
-      <SectionCard
-        title="Revenue Analytics"
-        description="Monthly revenue performance overview."
-      >
-        <RevenueChart data={revenueChartData[timeframe]} />
-      </SectionCard>
-      <SectionCard
-        title="Traffic Sources"
-        description="Breakdown of visitors by acquisition channel."
-      >
-        <TrafficSourcesChart />
-      </SectionCard>
+      <div className="grid gap-6 xl:grid-cols-2">
+        <SectionCard
+          title="Revenue Analytics"
+          description="Revenue performance based on selected timeframe."
+        >
+          <RevenueChart data={revenueChartData[timeframe]} />
+        </SectionCard>
+
+        <SectionCard
+          title="Traffic Sources"
+          description="Breakdown of visitors by acquisition channel."
+        >
+          <TrafficSourcesChart />
+        </SectionCard>
+      </div>
       <SectionCard
         title="Key Insights"
         description="Actionable observations based on current analytics data."
