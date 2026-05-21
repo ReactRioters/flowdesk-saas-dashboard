@@ -1,3 +1,17 @@
+function escapeCSVValue(value: string | number) {
+    const stringValue = String(value);
+
+    if (
+        stringValue.includes(",") ||
+        stringValue.includes('"') ||
+        stringValue.includes("\n")
+    ) {
+        return `"${stringValue.replace(/"/g, '""')}"`;
+    }
+
+    return stringValue;
+}
+
 export function downloadCSV(
     filename: string,
     rows: Record<string, string | number>[]
@@ -7,9 +21,9 @@ export function downloadCSV(
     const headers = Object.keys(rows[0]);
 
     const csvContent = [
-        headers.join(","),
+        headers.map(escapeCSVValue).join(","),
         ...rows.map((row) =>
-            headers.map((header) => row[header]).join(",")
+            headers.map((header) => escapeCSVValue(row[header])).join(",")
         ),
     ].join("\n");
 
@@ -18,15 +32,14 @@ export function downloadCSV(
     });
 
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
 
     link.href = url;
     link.setAttribute("download", filename);
 
     document.body.appendChild(link);
-
     link.click();
-
     document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
 }
