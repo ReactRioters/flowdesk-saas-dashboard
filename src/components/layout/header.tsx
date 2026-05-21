@@ -21,23 +21,8 @@ export function Header({ onOpenSidebar }: HeaderProps) {
     "/settings": "Settings",
   };
 
-  const pageDescriptionMap: Record<string, string> = {
-    "/": "Monitor your SaaS performance and activity.",
-    "/users": "Manage users, roles, and account access.",
-    "/billing":
-      "Manage subscriptions, plans, and billing activity.",
-    "/analytics":
-      "Track product growth and performance insights.",
-    "/settings":
-      "Manage application preferences and account settings.",
-  };
-
   const title =
     pageTitleMap[location.pathname] || "Dashboard";
-
-  const description =
-    pageDescriptionMap[location.pathname] ||
-    "Monitor your SaaS performance and activity.";
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
@@ -52,27 +37,19 @@ export function Header({ onOpenSidebar }: HeaderProps) {
           </button>
 
           <div>
-            <nav className="text-xs text-slate-500 dark:text-slate-400">
-              <span>Dashboard</span>
+            <nav className="flex gap-1 items-center text-xs text-slate-500 dark:text-slate-400">
+              <span className="text-base">Dashboard</span>
 
               {location.pathname !== "/" && (
-                <>
+                <div className="flex gap-1 items-center">
                   <span className="mx-2">/</span>
 
-                  <span className="text-slate-700 dark:text-slate-300">
+                  <h2 className="text-slate-700 dark:text-slate-300 font-medium text-xl">
                     {title}
-                  </span>
-                </>
+                  </h2>
+                </div>
               )}
             </nav>
-
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              {title}
-            </h2>
-
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {description}
-            </p>
           </div>
         </div>
 
