@@ -47,28 +47,78 @@ const revenueChartData = {
 
 const analyticsData = {
   "7d": {
-    visitors: "8,420",
-    conversion: "4.8%",
-    clicks: "18,240",
-    growth: "+6.2%",
+    visitors: {
+      current: 8420,
+      previous: 7910,
+    },
+    conversion: {
+      current: 4.8,
+      previous: 4.1,
+    },
+
+    clicks: {
+      current: 18240,
+      previous: 16900,
+    },
+
+    growth: {
+      current: 6.2,
+      previous: 4.8,
+    }
   },
   "30d": {
-    visitors: "34,880",
-    conversion: "5.4%",
-    clicks: "72,930",
-    growth: "+12.7%",
+    visitors: {
+      current: 34880,
+      previous: 31200,
+    },
+    conversion: {
+      current: 5.4,
+      previous: 4.8,
+    },
+    clicks: {
+      current: 72930,
+      previous: 65400,
+    },
+    growth: {
+      current: 12.7,
+      previous: 10.2,
+    },
   },
   "90d": {
-    visitors: "104,300",
-    conversion: "6.1%",
-    clicks: "218,600",
-    growth: "+19.4%",
+    visitors: {
+      current: 104300,
+      previous: 87600,
+    },
+    conversion: {
+      current: 6.1,
+      previous: 5.2,
+    },
+    clicks: {
+      current: 218600,
+      previous: 189000,
+    },
+    growth: {
+      current: 19.4,
+      previous: 15.6,
+    },
   },
   "1y": {
-    visitors: "428,900",
-    conversion: "7.3%",
-    clicks: "894,200",
-    growth: "+42.8%",
+    visitors: {
+      current: 428900,
+      previous: 298000,
+    },
+    conversion: {
+      current: 7.3,
+      previous: 5.8,
+    },
+    clicks: {
+      current: 894200,
+      previous: 650000,
+    },
+    growth: {
+      current: 42.8,
+      previous: 25.0,
+    },
   },
 };
 
