@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { deleteUser, getUsers, updateUser, type User } from "../../../services/users-service";
+import { deleteUser, getUsers, updateUser, createUser, type User } from "../../../services/users-service";
+import { AddUserModal } from "../components/add-user-modal";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { Users } from "lucide-react";
@@ -17,6 +18,7 @@ import { PageHeader } from "../../../components/ui/page-header";
 export function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
@@ -79,6 +81,22 @@ export function UsersPage() {
     },
   });
 
+  const createUserMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: (newUser) => {
+      setLocalUsers((prevUsers) => [newUser, ...prevUsers]);
+      setIsCreateOpen(false);
+      toast.success("User created successfully");
+    },
+    onError: () => {
+      toast.error("Failed to create user");
+    },
+  });
+
+  const handleCreateUser = (newUser: Omit<User, "id">) => {
+    createUserMutation.mutate(newUser);
+  };
+
   const handleUpdateUser = (updatedUser: User) => {
     updateUserMutation.mutate(updatedUser);
   };
@@ -104,6 +122,7 @@ export function UsersPage() {
         onResetFilters={resetFilters}
         onSortOrderChange={setSortOrder}
         hasActiveFilters={hasActiveFilters}
+        onAddUser={() => setIsCreateOpen(true)}
       />
       <p className="text-sm text-slate-600 dark:text-slate-400">
         Showing {paginatedUsers.length} of {filteredUsers.length} users
@@ -161,6 +180,12 @@ export function UsersPage() {
         onClose={() => setUserToDelete(null)}
         onConfirm={handleDeleteUser}
         isLoading={deleteUserMutation.isPending}
+      />
+      <AddUserModal
+        open={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onSave={handleCreateUser}
+        isLoading={createUserMutation.isPending}
       />
     </div>
   );

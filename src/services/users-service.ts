@@ -110,6 +110,14 @@ export async function updateUser(user: User): Promise<User> {
   return user;
 }
 
+export async function createUser(user: Omit<User, "id">): Promise<User> {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return {
+    ...user,
+    id: Math.random().toString(36).substr(2, 9),
+  };
+}
+
 export async function deleteUser(userId: string): Promise<string> {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return userId;

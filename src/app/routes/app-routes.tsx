@@ -7,6 +7,7 @@ import { DashboardPage } from "../../features/dashboard/pages/dashboard-page";
 import { BillingPage } from "../../features/billing/pages/billing-page";
 import { SettingsPage } from "../../features/settings/pages/settings-page";
 import { UsersPage } from "../../features/users/pages/users-page";
+import { ProjectsPage } from "../../features/projects/pages/projects-page";
 import { ProtectedRoute } from "./protected-route";
 
 export const appRoutes = createBrowserRouter([
@@ -23,6 +24,7 @@ export const appRoutes = createBrowserRouter([
         children: [
           { index: true, element: <DashboardPage /> },
           { path: "users", element: <UsersPage /> },
+          { path: "projects", element: <ProjectsPage /> },
           { path: "analytics", element: <AnalyticsPage /> },
           { path: "billing", element: <BillingPage /> },
           { path: "settings", element: <SettingsPage /> },

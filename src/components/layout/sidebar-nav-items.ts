@@ -1,6 +1,7 @@
 import {
   BarChart3,
   CreditCard,
+  FolderGit2,
   LayoutDashboard,
   Settings,
   Users,
@@ -16,6 +17,11 @@ export const sidebarNavItems = [
     label: "Users",
     href: "/users",
     icon: Users,
+  },
+  {
+    label: "Projects",
+    href: "/projects",
+    icon: FolderGit2,
   },
   {
     label: "Analytics",

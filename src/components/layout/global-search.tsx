@@ -14,6 +14,11 @@ const searchablePages = [
     path: "/users",
   },
   {
+    label: "Projects",
+    description: "Monitor milestones, progress, and collaborations",
+    path: "/projects",
+  },
+  {
     label: "Billing",
     description: "Manage subscriptions and plans",
     path: "/billing",

@@ -1,7 +1,8 @@
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
+import { Button } from "../../../components/ui/button";
 
 type UsersToolbarProps = {
     search: string;
@@ -17,6 +18,7 @@ type UsersToolbarProps = {
     onSortOrderChange: (value: "asc" | "desc") => void;
     onResetFilters: () => void;
     hasActiveFilters: boolean;
+    onAddUser: () => void;
 };
 
 export function UsersToolbar({
@@ -33,7 +35,8 @@ export function UsersToolbar({
     onSortOrderChange,
 
     onResetFilters,
-    hasActiveFilters
+    hasActiveFilters,
+    onAddUser,
 }: UsersToolbarProps) {
     return (
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -50,7 +53,7 @@ export function UsersToolbar({
                 />
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Select
                     value={roleFilter}
                     onChange={(event) =>
@@ -95,6 +98,10 @@ export function UsersToolbar({
                         Clear
                     </button>
                 )}
+                <Button type="button" onClick={onAddUser} className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add User
+                </Button>
             </div>
         </div>
     );
