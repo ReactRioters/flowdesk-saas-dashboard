@@ -8,7 +8,6 @@ import { Input } from "../../../components/ui/input";
 import { Modal } from "../../../components/ui/modal";
 import { Select } from "../../../components/ui/select";
 import type { User } from "../../../services/users-service";
-import { Form } from "react-router-dom";
 import { FormField } from "../../../components/ui/form-field";
 
 type EditUserModalProps = {

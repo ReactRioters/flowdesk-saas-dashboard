@@ -21,7 +21,6 @@ const statIcons = {
   churn: TrendingDown,
 };
 
-type Timeframe = "7d" | "30d" | "90d" | "1y";
 
 const revenueChartData = {
   "7d": [
