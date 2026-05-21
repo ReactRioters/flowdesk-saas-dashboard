@@ -4,13 +4,15 @@ import { PageHeader } from "../../../components/ui/page-header";
 import { Select } from "../../../components/ui/select";
 import { SectionCard } from "../../../components/ui/section-card";
 import { StatCard } from "../components/stat-card";
-import { BarChart3, MousePointerClick, TrendingUp, Users } from "lucide-react";
+import { BarChart3, Download, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { RevenueChart } from "../components/revenue-chart";
 import { TrafficSourcesChart } from "../components/traffic-sources-chart";
 import { AnalyticsInsights } from "../components/analytics-insights";
 import { AnalyticsSkeleton } from "../components/analytics-skeleton";
 import { ActivityFeed } from "../components/activity-feed";
 import { TopPagesTable } from "../components/top-pages-table";
+import { downloadCSV } from "../../../utils/download-csv";
+import { Button } from "../../../components/ui/button";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -81,6 +83,28 @@ export function AnalyticsPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleExportReport = () => {
+    downloadCSV("analytics-report.csv", [
+      {
+        metric: "Visitors",
+        value: analyticsData[timeframe].visitors,
+      },
+      {
+        metric: "Conversion Rate",
+        value: analyticsData[timeframe].conversion,
+      },
+      {
+        metric: "Product Clicks",
+        value: analyticsData[timeframe].clicks,
+      },
+      {
+        metric: "Growth",
+        value: analyticsData[timeframe].growth,
+      },
+    ]);
+  };
+
   const stats = useMemo(() => {
     const data = analyticsData[timeframe];
 
@@ -128,16 +152,29 @@ export function AnalyticsPage() {
           description="Track visitor behavior, conversion performance, and product growth."
         />
 
-        <Select
-          value={timeframe}
-          onChange={(event) => setTimeframe(event.target.value as Timeframe)}
-          className="w-full sm:w-40"
-        >
-          <option value="7d">Last 7 days</option>
-          <option value="30d">Last 30 days</option>
-          <option value="90d">Last 90 days</option>
-          <option value="1y">Last 1 year</option>
-        </Select>
+        <div className="flex items-center gap-3">
+          <Select
+            value={timeframe}
+            onChange={(event) =>
+              setTimeframe(event.target.value as Timeframe)
+            }
+            className="w-full sm:w-40"
+          >
+            <option value="7d">Last 7 days</option>
+            <option value="30d">Last 30 days</option>
+            <option value="90d">Last 90 days</option>
+            <option value="1y">Last 1 year</option>
+          </Select>
+
+          <Button
+            type="button"
+            onClick={handleExportReport}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+        </div>
       </div>
 
       <SectionCard
