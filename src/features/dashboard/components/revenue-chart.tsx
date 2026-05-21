@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartEmptyState } from "../../../components/ui/chart-empty-state";
 
 type RevenueChartProps = {
   data: {
@@ -15,7 +16,16 @@ type RevenueChartProps = {
   }[];
 };
 
+
 export function RevenueChart({ data }: RevenueChartProps) {
+  if (!data.length) {
+    return (
+      <ChartEmptyState
+        title="No revenue data"
+        description="Revenue analytics will appear once transactions are available."
+      />
+    );
+  }
   return (
     <div className="h-[320px] w-full">
       <ResponsiveContainer width="100%" height="100%">
