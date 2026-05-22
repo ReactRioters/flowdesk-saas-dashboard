@@ -1,4 +1,4 @@
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Download } from "lucide-react";
 
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
@@ -19,6 +19,7 @@ type UsersToolbarProps = {
     onResetFilters: () => void;
     hasActiveFilters: boolean;
     onAddUser: () => void;
+    onExport?: () => void;
 };
 
 export function UsersToolbar({
@@ -37,6 +38,7 @@ export function UsersToolbar({
     onResetFilters,
     hasActiveFilters,
     onAddUser,
+    onExport,
 }: UsersToolbarProps) {
     return (
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -98,6 +100,13 @@ export function UsersToolbar({
                         Clear
                     </button>
                 )}
+                {onExport && (
+                    <Button type="button" onClick={onExport} className="gap-2">
+                        <Download className="h-4 w-4" />
+                        Export
+                    </Button>
+                )}
+
                 <Button type="button" onClick={onAddUser} className="gap-2">
                     <Plus className="h-4 w-4" />
                     Add User

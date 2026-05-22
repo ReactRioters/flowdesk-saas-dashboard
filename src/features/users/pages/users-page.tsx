@@ -10,6 +10,7 @@ import { useUsersFilter } from "../hooks/use-users-filter";
 import { Pagination } from "../../../components/ui/pagination";
 import { ErrorState } from "../../../components/ui/error-state";
 import { useEffect, useState } from "react";
+import { downloadCSV } from "../../../utils/download-csv";
 import { EditUserModal } from "../components/edit-user-modal";
 import { DeleteUserModal } from "../components/delete-user-modal";
 import { toast } from "sonner";
@@ -105,6 +106,19 @@ export function UsersPage() {
     deleteUserMutation.mutate(userId);
   };
 
+  const handleExport = () => {
+    const rows = filteredUsers.map((u) => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      role: u.role,
+      status: u.status,
+      plan: u.plan,
+    }));
+
+    downloadCSV("users.csv", rows);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -123,6 +137,7 @@ export function UsersPage() {
         onSortOrderChange={setSortOrder}
         hasActiveFilters={hasActiveFilters}
         onAddUser={() => setIsCreateOpen(true)}
+        onExport={handleExport}
       />
       <p className="text-sm text-slate-600 dark:text-slate-400">
         Showing {paginatedUsers.length} of {filteredUsers.length} users
