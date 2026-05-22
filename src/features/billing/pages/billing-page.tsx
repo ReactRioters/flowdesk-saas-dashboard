@@ -120,7 +120,7 @@ export function BillingPage() {
   const handleExport = () => {
     const rows = filteredSubscriptions.map((subscription) => ({
       id: subscription.id,
-      name: subscription.name,
+      customerName: subscription.customerName,
       email: subscription.email,
       plan: subscription.plan,
       status: subscription.status,
