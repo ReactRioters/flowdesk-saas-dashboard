@@ -1,6 +1,7 @@
-import { Search } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
+import { Button } from "../../../components/ui/button";
 
 type SubscriptionsToolbarProps = {
   search: string;
@@ -11,6 +12,7 @@ type SubscriptionsToolbarProps = {
   onStatusFilterChange: (value: string) => void;
   hasActiveFilters: boolean;
   resetFilters: () => void;
+  onExport?: () => void;
 };
 
 export function SubscriptionsToolbar({
@@ -63,6 +65,13 @@ export function SubscriptionsToolbar({
           >
             Reset Filters
           </button>
+        )}
+
+        {onExport && (
+          <Button type="button" onClick={onExport} className="gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
         )}
       </div>
     </div>

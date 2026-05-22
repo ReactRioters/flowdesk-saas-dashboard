@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
 import { Pagination } from "../../../components/ui/pagination";
+import { downloadCSV } from "../../../utils/download-csv";
 import {
   cancelSubscription,
   getSubscriptions,
@@ -115,6 +116,20 @@ export function BillingPage() {
   const handleConfirmCancelSubscription = (subscription: Subscription) => {
     cancelSubscriptionMutation.mutate(subscription);
   };
+
+  const handleExport = () => {
+    const rows = filteredSubscriptions.map((subscription) => ({
+      id: subscription.id,
+      name: subscription.name,
+      email: subscription.email,
+      plan: subscription.plan,
+      status: subscription.status,
+      renewalDate: subscription.renewalDate,
+    }));
+
+    downloadCSV("subscriptions.csv", rows);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -131,6 +146,7 @@ export function BillingPage() {
         onStatusFilterChange={setStatusFilter}
         hasActiveFilters={hasActiveFilters}
         resetFilters={resetFilters}
+        onExport={handleExport}
       />
 
       <p className="text-sm text-slate-600 dark:text-slate-400">
