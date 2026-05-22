@@ -7,6 +7,7 @@ import { PageHeader } from "../../../components/ui/page-header";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ErrorState } from "../../../components/ui/error-state";
 import { Pagination } from "../../../components/ui/pagination";
+import { downloadCSV } from "../../../utils/download-csv";
 import {
   getProjects,
   createProject,
@@ -104,6 +105,19 @@ export function ProjectsPage() {
     }
   };
 
+  const handleExport = () => {
+    const rows = filteredProjects.map((project) => ({
+      id: project.id,
+      name: project.name,
+      owner: project.owner,
+      status: project.status,
+      dueDate: project.dueDate,
+      progress: `${project.progress}%`,
+    }));
+
+    downloadCSV("projects.csv", rows);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -121,6 +135,7 @@ export function ProjectsPage() {
         onResetFilters={resetFilters}
         hasActiveFilters={hasActiveFilters}
         onCreateProject={() => setIsCreateOpen(true)}
+        onExport={handleExport}
       />
 
       <p className="text-sm text-slate-600 dark:text-slate-400">

@@ -1,4 +1,4 @@
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Download } from "lucide-react";
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
@@ -13,6 +13,7 @@ type ProjectsToolbarProps = {
   onResetFilters: () => void;
   hasActiveFilters: boolean;
   onCreateProject: () => void;
+  onExport?: () => void;
 };
 
 export function ProjectsToolbar({
@@ -65,6 +66,13 @@ export function ProjectsToolbar({
           >
             Clear
           </button>
+        )}
+
+        {onExport && (
+          <Button type="button" onClick={onExport} className="gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
         )}
 
         <Button type="button" onClick={onCreateProject} className="gap-2">
