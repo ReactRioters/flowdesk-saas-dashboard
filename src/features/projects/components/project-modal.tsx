@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -7,7 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Modal } from "../../../components/ui/modal";
 import { Select } from "../../../components/ui/select";
-import type { Project, ProjectStatus } from "../../../services/projects-service";
+import type { Project } from "../../../services/projects-service";
 import { FormField } from "../../../components/ui/form-field";
 
 type ProjectModalProps = {
@@ -48,7 +48,7 @@ export function ProjectModal({
     reset,
     formState: { errors },
   } = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectSchema),
+    resolver: zodResolver(projectSchema) as Resolver<ProjectFormValues>,
   });
 
   useEffect(() => {

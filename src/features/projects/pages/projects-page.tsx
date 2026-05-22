@@ -109,10 +109,11 @@ export function ProjectsPage() {
     const rows = filteredProjects.map((project) => ({
       id: project.id,
       name: project.name,
-      owner: project.owner,
+      description: project.description,
       status: project.status,
-      dueDate: project.dueDate,
       progress: `${project.progress}%`,
+      membersCount: project.membersCount,
+      dueDate: project.dueDate,
     }));
 
     downloadCSV("projects.csv", rows);
@@ -162,7 +163,12 @@ export function ProjectsPage() {
               key={project.id}
               project={project}
               onEdit={setSelectedProject}
-              onDelete={setProjectToDelete}
+              onDelete={(projectId) => {
+                const projectToDelete = localProjects.find((project) => project.id === projectId);
+                if (projectToDelete) {
+                  setProjectToDelete(projectToDelete);
+                }
+              }}
             />
           ))}
         </div>
