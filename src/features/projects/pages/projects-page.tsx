@@ -116,7 +116,15 @@ export function ProjectsPage() {
       dueDate: project.dueDate,
     }));
 
-    downloadCSV("projects.csv", rows);
+    downloadCSV("projects.csv", rows, [
+      { key: "id", label: "ID" },
+      { key: "name", label: "Name" },
+      { key: "description", label: "Description" },
+      { key: "status", label: "Status" },
+      { key: "progress", label: "Progress" },
+      { key: "membersCount", label: "Members" },
+      { key: "dueDate", label: "Due Date" },
+    ]);
   };
 
   return (

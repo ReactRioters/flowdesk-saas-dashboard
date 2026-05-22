@@ -12,19 +12,31 @@ function escapeCSVValue(value: string | number) {
     return stringValue;
 }
 
-export function downloadCSV(
+export type CSVColumn<Row extends Record<string, string | number> = Record<string, string | number>> = {
+    key: keyof Row;
+    label: string;
+};
+
+export function downloadCSV<Row extends Record<string, string | number>>(
     filename: string,
-    rows: Record<string, string | number>[]
+    rows: Row[],
+    columns?: CSVColumn<Row>[]
 ) {
     if (!rows.length) return;
 
-    const headers = Object.keys(rows[0]);
+    const headers = columns
+        ? columns.map((column) => column.label)
+        : Object.keys(rows[0]);
 
     const csvContent = [
         headers.map(escapeCSVValue).join(","),
-        ...rows.map((row) =>
-            headers.map((header) => escapeCSVValue(row[header])).join(",")
-        ),
+        ...rows.map((row) => {
+            const values = columns
+                ? columns.map((column) => escapeCSVValue(row[column.key]))
+                : Object.keys(row).map((key) => escapeCSVValue(row[key]));
+
+            return values.join(",");
+        }),
     ].join("\n");
 
     const blob = new Blob([csvContent], {

@@ -116,7 +116,14 @@ export function UsersPage() {
       plan: u.plan,
     }));
 
-    downloadCSV("users.csv", rows);
+    downloadCSV("users.csv", rows, [
+      { key: "id", label: "ID" },
+      { key: "name", label: "Name" },
+      { key: "email", label: "Email" },
+      { key: "role", label: "Role" },
+      { key: "status", label: "Status" },
+      { key: "plan", label: "Plan" },
+    ]);
   };
 
   return (

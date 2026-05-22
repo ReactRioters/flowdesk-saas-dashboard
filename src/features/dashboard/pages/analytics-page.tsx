@@ -85,24 +85,31 @@ export function AnalyticsPage() {
   }, []);
 
   const handleExportReport = () => {
-    downloadCSV("analytics-report.csv", [
-      {
-        metric: "Visitors",
-        value: analyticsData[timeframe].visitors,
-      },
-      {
-        metric: "Conversion Rate",
-        value: analyticsData[timeframe].conversion,
-      },
-      {
-        metric: "Product Clicks",
-        value: analyticsData[timeframe].clicks,
-      },
-      {
-        metric: "Growth",
-        value: analyticsData[timeframe].growth,
-      },
-    ]);
+    downloadCSV(
+      "analytics-report.csv",
+      [
+        {
+          metric: "Visitors",
+          value: analyticsData[timeframe].visitors,
+        },
+        {
+          metric: "Conversion Rate",
+          value: analyticsData[timeframe].conversion,
+        },
+        {
+          metric: "Product Clicks",
+          value: analyticsData[timeframe].clicks,
+        },
+        {
+          metric: "Growth",
+          value: analyticsData[timeframe].growth,
+        },
+      ],
+      [
+        { key: "metric", label: "Metric" },
+        { key: "value", label: "Value" },
+      ]
+    );
   };
 
   const stats = useMemo(() => {

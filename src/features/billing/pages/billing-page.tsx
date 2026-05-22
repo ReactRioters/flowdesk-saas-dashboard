@@ -127,7 +127,14 @@ export function BillingPage() {
       renewalDate: subscription.renewalDate,
     }));
 
-    downloadCSV("subscriptions.csv", rows);
+    downloadCSV("subscriptions.csv", rows, [
+      { key: "id", label: "ID" },
+      { key: "customerName", label: "Customer" },
+      { key: "email", label: "Email" },
+      { key: "plan", label: "Plan" },
+      { key: "status", label: "Status" },
+      { key: "renewalDate", label: "Renewal Date" },
+    ]);
   };
 
   return (
