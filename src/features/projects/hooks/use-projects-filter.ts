@@ -109,7 +109,7 @@ export function useProjectsFilter(projects: Project[]) {
   const resetFilters = () => {
     setSearch("");
     setStatusFilter("all");
-    setSortOrder("asc");
+    setSortOrder("name-asc");
     setCurrentPage(1);
   };
 
