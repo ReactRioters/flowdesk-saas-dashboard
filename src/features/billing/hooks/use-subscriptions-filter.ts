@@ -4,12 +4,24 @@ import { useSearchParams } from "react-router-dom";
 
 export function useSubscriptionsFilter(subscriptions: Subscription[]) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("search") || "");
-  const [planFilter, setPlanFilter] = useState(searchParams.get("plan") || "all");
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [search, setSearchState] = useState(searchParams.get("search") || "");
+  const [planFilter, setPlanFilterState] = useState(searchParams.get("plan") || "all");
+  const [statusFilter, setStatusFilterState] = useState(searchParams.get("status") || "all");
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page")) || 1
   );
+  const setSearch = (value: string) => {
+    setSearchState(value);
+    setCurrentPage(1);
+  };
+  const setPlanFilter = (value: string) => {
+    setPlanFilterState(value);
+    setCurrentPage(1);
+  };
+  const setStatusFilter = (value: string) => {
+    setStatusFilterState(value);
+    setCurrentPage(1);
+  };
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -49,10 +61,6 @@ export function useSubscriptionsFilter(subscriptions: Subscription[]) {
       currentPage * itemsPerPage
     );
   }, [filteredSubscriptions, currentPage]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search, planFilter, statusFilter]);
 
   const hasActiveFilters =
     search !== "" ||

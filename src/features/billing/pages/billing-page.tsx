@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,6 +22,7 @@ import { CancelSubscriptionModal } from "../components/cancel-subscription-modal
 import { PageHeader } from "../../../components/ui/page-header";
 
 export function BillingPage() {
+  const queryClient = useQueryClient();
   const {
     data: subscriptions = [],
     isLoading,
@@ -31,9 +32,6 @@ export function BillingPage() {
     queryFn: getSubscriptions,
   });
 
-  const [localSubscriptions, setLocalSubscriptions] =
-    useState<Subscription[]>(subscriptions);
-
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
 
@@ -41,10 +39,6 @@ export function BillingPage() {
     subscriptionToCancel,
     setSubscriptionToCancel,
   ] = useState<Subscription | null>(null);
-
-  useEffect(() => {
-    setLocalSubscriptions(subscriptions);
-  }, [subscriptions]);
 
   const {
     search,
@@ -65,15 +59,15 @@ export function BillingPage() {
 
     hasActiveFilters,
     resetFilters,
-  } = useSubscriptionsFilter(localSubscriptions);
+  } = useSubscriptionsFilter(subscriptions);
 
   const updateSubscriptionMutation = useMutation({
     mutationFn: updateSubscription,
     onSuccess: (updatedSubscription) => {
-      setLocalSubscriptions((prev) =>
-        prev.map((item) =>
+      queryClient.setQueryData<Subscription[]>(["subscriptions"], (prev) =>
+        prev?.map((item) =>
           item.id === updatedSubscription.id ? updatedSubscription : item
-        )
+        ) ?? []
       );
 
       setSelectedSubscription(null);
@@ -87,10 +81,10 @@ export function BillingPage() {
   const cancelSubscriptionMutation = useMutation({
     mutationFn: cancelSubscription,
     onSuccess: (cancelledSubscription) => {
-      setLocalSubscriptions((prev) =>
-        prev.map((item) =>
+      queryClient.setQueryData<Subscription[]>(["subscriptions"], (prev) =>
+        prev?.map((item) =>
           item.id === cancelledSubscription.id ? cancelledSubscription : item
-        )
+        ) ?? []
       );
 
       setSubscriptionToCancel(null);

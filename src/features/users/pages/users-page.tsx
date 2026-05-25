@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteUser, getUsers, updateUser, createUser, type User } from "../../../services/users-service";
 import { AddUserModal } from "../components/add-user-modal";
 import { UsersTableSkeleton } from "../components/users-table-skeleton";
@@ -9,7 +9,7 @@ import { UsersToolbar } from "../components/users-toolbar";
 import { useUsersFilter } from "../hooks/use-users-filter";
 import { Pagination } from "../../../components/ui/pagination";
 import { ErrorState } from "../../../components/ui/error-state";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { downloadCSV } from "../../../utils/download-csv";
 import { EditUserModal } from "../components/edit-user-modal";
 import { DeleteUserModal } from "../components/delete-user-modal";
@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { PageHeader } from "../../../components/ui/page-header";
 
 export function UsersPage() {
+  const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -24,8 +25,6 @@ export function UsersPage() {
     queryKey: ["users"],
     queryFn: getUsers,
   });
-  const [localUsers, setLocalUsers] =
-    useState(users);
   const {
     search,
     setSearch,
@@ -45,18 +44,15 @@ export function UsersPage() {
     setCurrentPage,
     resetFilters,
     hasActiveFilters
-  } = useUsersFilter(localUsers);
-  useEffect(() => {
-    setLocalUsers(users);
-  }, [users]);
+  } = useUsersFilter(users);
 
   const updateUserMutation = useMutation({
     mutationFn: updateUser,
     onSuccess: (updatedUser) => {
-      setLocalUsers((prevUsers) =>
-        prevUsers.map((user) =>
+      queryClient.setQueryData<User[]>(["users"], (prevUsers) =>
+        prevUsers?.map((user) =>
           user.id === updatedUser.id ? updatedUser : user
-        )
+        ) ?? []
       );
 
       setSelectedUser(null);
@@ -70,8 +66,8 @@ export function UsersPage() {
   const deleteUserMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: (deletedUserId) => {
-      setLocalUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== deletedUserId)
+      queryClient.setQueryData<User[]>(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== deletedUserId) ?? []
       );
 
       setUserToDelete(null);
@@ -85,7 +81,9 @@ export function UsersPage() {
   const createUserMutation = useMutation({
     mutationFn: createUser,
     onSuccess: (newUser) => {
-      setLocalUsers((prevUsers) => [newUser, ...prevUsers]);
+      queryClient.setQueryData<User[]>(["users"], (prevUsers) =>
+        prevUsers ? [newUser, ...prevUsers] : [newUser]
+      );
       setIsCreateOpen(false);
       toast.success("User created successfully");
     },

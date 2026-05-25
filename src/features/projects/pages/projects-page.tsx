@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FolderGit2 } from "lucide-react";
 import { toast } from "sonner";
@@ -37,12 +37,6 @@ export function ProjectsPage() {
     queryFn: getProjects,
   });
 
-  const [localProjects, setLocalProjects] = useState<Project[]>(projects);
-
-  useEffect(() => {
-    setLocalProjects(projects);
-  }, [projects]);
-
   const {
     search,
     setSearch,
@@ -57,12 +51,14 @@ export function ProjectsPage() {
     paginatedProjects,
     resetFilters,
     hasActiveFilters,
-  } = useProjectsFilter(localProjects);
+  } = useProjectsFilter(projects);
 
   const createProjectMutation = useMutation({
     mutationFn: createProject,
     onSuccess: (newProject) => {
-      setLocalProjects((prev) => [newProject, ...prev]);
+      queryClient.setQueryData<Project[]>(["projects"], (prevProjects) =>
+        prevProjects ? [newProject, ...prevProjects] : [newProject]
+      );
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project created successfully");
     },
@@ -74,8 +70,8 @@ export function ProjectsPage() {
   const updateProjectMutation = useMutation({
     mutationFn: updateProject,
     onSuccess: (updatedProj) => {
-      setLocalProjects((prev) =>
-        prev.map((proj) => (proj.id === updatedProj.id ? updatedProj : proj))
+      queryClient.setQueryData<Project[]>(["projects"], (prevProjects) =>
+        prevProjects?.map((proj) => (proj.id === updatedProj.id ? updatedProj : proj)) ?? []
       );
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project updated successfully");
@@ -88,7 +84,9 @@ export function ProjectsPage() {
   const deleteProjectMutation = useMutation({
     mutationFn: deleteProject,
     onSuccess: (deletedId) => {
-      setLocalProjects((prev) => prev.filter((proj) => proj.id !== deletedId));
+      queryClient.setQueryData<Project[]>(["projects"], (prevProjects) =>
+        prevProjects?.filter((proj) => proj.id !== deletedId) ?? []
+      );
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project deleted successfully");
     },
@@ -172,7 +170,7 @@ export function ProjectsPage() {
               project={project}
               onEdit={setSelectedProject}
               onDelete={(projectId) => {
-                const projectToDelete = localProjects.find((project) => project.id === projectId);
+                const projectToDelete = projects.find((project) => project.id === projectId);
                 if (projectToDelete) {
                   setProjectToDelete(projectToDelete);
                 }

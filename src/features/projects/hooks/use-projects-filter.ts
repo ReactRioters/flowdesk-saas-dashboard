@@ -5,9 +5,9 @@ import { useSearchParams } from "react-router-dom";
 
 export function useProjectsFilter(projects: Project[]) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("search") || "");
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
-  const [sortOrder, setSortOrder] = useState<
+  const [search, setSearchState] = useState(searchParams.get("search") || "");
+  const [statusFilter, setStatusFilterState] = useState(searchParams.get("status") || "all");
+  const [sortOrder, setSortOrderState] = useState<
     | "name-asc"
     | "name-desc"
     | "dueDate-asc"
@@ -30,6 +30,26 @@ export function useProjectsFilter(projects: Project[]) {
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page")) || 1
   );
+  const setSearch = (value: string) => {
+    setSearchState(value);
+    setCurrentPage(1);
+  };
+  const setStatusFilter = (value: string) => {
+    setStatusFilterState(value);
+    setCurrentPage(1);
+  };
+  const setSortOrder = (
+    value:
+      | "name-asc"
+      | "name-desc"
+      | "dueDate-asc"
+      | "dueDate-desc"
+      | "progress-asc"
+      | "progress-desc"
+  ) => {
+    setSortOrderState(value);
+    setCurrentPage(1);
+  };
 
   const debouncedSearch = useDebounce(search, 300);
 
@@ -101,10 +121,6 @@ export function useProjectsFilter(projects: Project[]) {
       currentPage * itemsPerPage
     );
   }, [filteredProjects, currentPage]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search, statusFilter, sortOrder]);
 
   const resetFilters = () => {
     setSearch("");

@@ -6,23 +6,39 @@ import { useSearchParams } from "react-router-dom";
 
 export function useUsersFilter(users: User[]) {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [search, setSearch] = useState(
+    const [search, setSearchState] = useState(
         searchParams.get("search") || ""
     );
-    const [roleFilter, setRoleFilter] =
+    const [roleFilter, setRoleFilterState] =
         useState(
             searchParams.get("role") || "all"
         );
-    const [statusFilter, setStatusFilter] =
+    const [statusFilter, setStatusFilterState] =
         useState(
             searchParams.get("status") || "all"
         );
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
+    const [sortOrder, setSortOrderState] = useState<"asc" | "desc">(
         searchParams.get("sort") === "desc" ? "desc" : "asc"
     );
     const [currentPage, setCurrentPage] = useState(
         Number(searchParams.get("page")) || 1
     );
+    const setSearch = (value: string) => {
+        setSearchState(value);
+        setCurrentPage(1);
+    };
+    const setRoleFilter = (value: string) => {
+        setRoleFilterState(value);
+        setCurrentPage(1);
+    };
+    const setStatusFilter = (value: string) => {
+        setStatusFilterState(value);
+        setCurrentPage(1);
+    };
+    const setSortOrder = (value: "asc" | "desc") => {
+        setSortOrderState(value);
+        setCurrentPage(1);
+    };
     const debouncedSearch = useDebounce(search, 300);
     useEffect(() => {
         const params = new URLSearchParams();
@@ -82,7 +98,7 @@ export function useUsersFilter(users: User[]) {
         });
 
         return sorted;
-    }, [users, search, roleFilter, statusFilter, sortOrder, debouncedSearch]);
+    }, [users, debouncedSearch, roleFilter, statusFilter, sortOrder]);
 
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
@@ -92,10 +108,6 @@ export function useUsersFilter(users: User[]) {
             currentPage * itemsPerPage
         );
     }, [filteredUsers, currentPage]);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [search, roleFilter, statusFilter, sortOrder]);
 
     const resetFilters = () => {
         setSearch("");
