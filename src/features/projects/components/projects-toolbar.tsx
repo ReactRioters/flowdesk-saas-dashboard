@@ -44,6 +44,8 @@ export function ProjectsToolbar({
   hasActiveFilters,
   onCreateProject,
   onExport,
+  viewMode,
+  onViewModeChange,
 }: ProjectsToolbarProps) {
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
