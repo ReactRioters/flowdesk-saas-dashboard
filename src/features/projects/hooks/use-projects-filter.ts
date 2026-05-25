@@ -7,9 +7,26 @@ export function useProjectsFilter(projects: Project[]) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
-    searchParams.get("sort") === "desc" ? "desc" : "asc"
-  );
+  const [sortOrder, setSortOrder] = useState<
+    | "name-asc"
+    | "name-desc"
+    | "dueDate-asc"
+    | "dueDate-desc"
+    | "progress-asc"
+    | "progress-desc"
+  >(searchParams.get("sort") === "name-desc" ||
+    searchParams.get("sort") === "dueDate-asc" ||
+    searchParams.get("sort") === "dueDate-desc" ||
+    searchParams.get("sort") === "progress-asc" ||
+    searchParams.get("sort") === "progress-desc"
+    ? (searchParams.get("sort") as
+        | "name-asc"
+        | "name-desc"
+        | "dueDate-asc"
+        | "dueDate-desc"
+        | "progress-asc"
+        | "progress-desc")
+    : "name-asc");
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page")) || 1
   );
@@ -27,7 +44,7 @@ export function useProjectsFilter(projects: Project[]) {
       params.set("status", statusFilter);
     }
 
-    if (sortOrder !== "asc") {
+    if (sortOrder !== "name-asc") {
       params.set("sort", sortOrder);
     }
 
@@ -52,8 +69,25 @@ export function useProjectsFilter(projects: Project[]) {
     });
 
     const sorted = [...filtered].sort((a, b) => {
-      const comparison = a.name.localeCompare(b.name);
-      return sortOrder === "asc" ? comparison : -comparison;
+      const [field, direction] = sortOrder.split("-") as [
+        "name" | "dueDate" | "progress",
+        "asc" | "desc"
+      ];
+
+      if (field === "name") {
+        const comparison = a.name.localeCompare(b.name);
+        return direction === "asc" ? comparison : -comparison;
+      }
+
+      if (field === "dueDate") {
+        const toTimestamp = (date: string) =>
+          date === "—" ? Number.MAX_SAFE_INTEGER : new Date(date).getTime();
+        const comparison = toTimestamp(a.dueDate) - toTimestamp(b.dueDate);
+        return direction === "asc" ? comparison : -comparison;
+      }
+
+      const comparison = a.progress - b.progress;
+      return direction === "asc" ? comparison : -comparison;
     });
 
     return sorted;
@@ -79,7 +113,8 @@ export function useProjectsFilter(projects: Project[]) {
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = search !== "" || statusFilter !== "all" || sortOrder !== "asc";
+  const hasActiveFilters =
+    search !== "" || statusFilter !== "all" || sortOrder !== "name-asc";
 
   return {
     search,

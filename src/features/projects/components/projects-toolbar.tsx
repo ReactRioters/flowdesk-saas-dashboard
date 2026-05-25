@@ -8,8 +8,22 @@ type ProjectsToolbarProps = {
   onSearchChange: (value: string) => void;
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
-  sortOrder: "asc" | "desc";
-  onSortOrderChange: (value: "asc" | "desc") => void;
+  sortOrder:
+    | "name-asc"
+    | "name-desc"
+    | "dueDate-asc"
+    | "dueDate-desc"
+    | "progress-asc"
+    | "progress-desc";
+  onSortOrderChange: (
+    value:
+      | "name-asc"
+      | "name-desc"
+      | "dueDate-asc"
+      | "dueDate-desc"
+      | "progress-asc"
+      | "progress-desc"
+  ) => void;
   onResetFilters: () => void;
   hasActiveFilters: boolean;
   onCreateProject: () => void;
@@ -53,10 +67,24 @@ export function ProjectsToolbar({
 
         <Select
           value={sortOrder}
-          onChange={(e) => onSortOrderChange(e.target.value as "asc" | "desc")}
+          onChange={(e) =>
+            onSortOrderChange(
+              e.target.value as
+                | "name-asc"
+                | "name-desc"
+                | "dueDate-asc"
+                | "dueDate-desc"
+                | "progress-asc"
+                | "progress-desc"
+            )
+          }
         >
-          <option value="asc">Name A-Z</option>
-          <option value="desc">Name Z-A</option>
+          <option value="name-asc">Name A-Z</option>
+          <option value="name-desc">Name Z-A</option>
+          <option value="dueDate-asc">Due Date Soonest</option>
+          <option value="dueDate-desc">Due Date Latest</option>
+          <option value="progress-asc">Progress Low-High</option>
+          <option value="progress-desc">Progress High-Low</option>
         </Select>
 
         {hasActiveFilters && (
