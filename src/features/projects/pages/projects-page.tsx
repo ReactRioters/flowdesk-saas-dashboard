@@ -19,6 +19,7 @@ import { ProjectCard } from "../components/project-card";
 import { ProjectModal } from "../components/project-modal";
 import { DeleteProjectModal } from "../components/delete-project-modal";
 import { ProjectsToolbar } from "../components/projects-toolbar";
+import { ProjectsTable } from "../components/projects-table";
 import { ProjectsSkeleton } from "../components/projects-skeleton";
 import { useProjectsFilter } from "../hooks/use-projects-filter";
 
@@ -36,7 +37,7 @@ export function ProjectsPage() {
     queryKey: ["projects"],
     queryFn: getProjects,
   });
-
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const {
     search,
     setSearch,
@@ -143,6 +144,8 @@ export function ProjectsPage() {
         hasActiveFilters={hasActiveFilters}
         onCreateProject={() => setIsCreateOpen(true)}
         onExport={handleExport}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       <p className="text-sm text-slate-600 dark:text-slate-400">
@@ -162,23 +165,38 @@ export function ProjectsPage() {
           title="No projects found"
           description="Try adjusting your filters or add a new project to get started."
         />
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {paginatedProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
+          ) : viewMode === "grid" ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {paginatedProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onEdit={setSelectedProject}
+                  onDelete={(projectId) => {
+                    const projectToDelete = projects.find(
+                      (project) => project.id === projectId
+                    );
+                    if (projectToDelete) {
+                      setProjectToDelete(projectToDelete);
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <ProjectsTable
+              projects={paginatedProjects}
               onEdit={setSelectedProject}
               onDelete={(projectId) => {
-                const projectToDelete = projects.find((project) => project.id === projectId);
+                const projectToDelete = projects.find(
+                  (project) => project.id === projectId
+                );
                 if (projectToDelete) {
                   setProjectToDelete(projectToDelete);
                 }
               }}
             />
-          ))}
-        </div>
-      )}
+          )}
 
       {!isLoading && paginatedProjects.length > 0 && (
         <Pagination

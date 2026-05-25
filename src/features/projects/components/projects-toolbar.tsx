@@ -1,7 +1,8 @@
-import { Search, Plus, Download } from "lucide-react";
+import { Search, Plus, Download, LayoutGrid, List } from "lucide-react";
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
+import { cn } from "../../../utils/cn";
 
 type ProjectsToolbarProps = {
   search: string;
@@ -28,6 +29,8 @@ type ProjectsToolbarProps = {
   hasActiveFilters: boolean;
   onCreateProject: () => void;
   onExport?: () => void;
+  viewMode: "grid" | "list";
+  onViewModeChange: (value: "grid" | "list") => void;
 };
 
 export function ProjectsToolbar({
@@ -86,6 +89,35 @@ export function ProjectsToolbar({
           <option value="progress-asc">Progress Low-High</option>
           <option value="progress-desc">Progress High-Low</option>
         </Select>
+
+        <div className="inline-flex overflow-hidden rounded-full border border-slate-300 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+          <button
+            type="button"
+            onClick={() => onViewModeChange("grid")}
+            className={cn(
+              "flex items-center gap-2 px-3 py-2 text-sm transition",
+              viewMode === "grid"
+                ? "bg-white text-slate-900 dark:bg-slate-800 dark:text-white"
+                : "hover:bg-slate-200 dark:hover:bg-slate-800"
+            )}
+          >
+            <LayoutGrid className="h-4 w-4" />
+            Grid
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewModeChange("list")}
+            className={cn(
+              "flex items-center gap-2 px-3 py-2 text-sm transition",
+              viewMode === "list"
+                ? "bg-white text-slate-900 dark:bg-slate-800 dark:text-white"
+                : "hover:bg-slate-200 dark:hover:bg-slate-800"
+            )}
+          >
+            <List className="h-4 w-4" />
+            List
+          </button>
+        </div>
 
         {hasActiveFilters && (
           <button
