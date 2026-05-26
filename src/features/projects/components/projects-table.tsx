@@ -1,4 +1,4 @@
-import { Calendar, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { StatusBadge } from "../../../components/ui/status-badge";
 import { Button } from "../../../components/ui/button";
 import type { Project } from "../../../services/projects-service";
