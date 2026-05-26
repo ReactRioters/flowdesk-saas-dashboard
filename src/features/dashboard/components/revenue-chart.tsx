@@ -2,6 +2,8 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -14,10 +16,11 @@ type RevenueChartProps = {
     label: string;
     revenue: number;
   }[];
+  chartType?: "bar" | "line";
 };
 
 
-export function RevenueChart({ data }: RevenueChartProps) {
+export function RevenueChart({ data, chartType = "bar" }: RevenueChartProps) {
   if (!data.length) {
     return (
       <ChartEmptyState
@@ -29,29 +32,59 @@ export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <div className="h-[320px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            vertical={false}
-            stroke="#334155"
-            opacity={0.15}
-          />
+        {chartType === "line" ? (
+          <LineChart data={data}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#334155"
+              opacity={0.15}
+            />
 
-          <XAxis dataKey="label" />
+            <XAxis dataKey="label" />
 
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 12 }}
-          />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+            />
 
-          <Tooltip />
+            <Tooltip />
 
-          <Bar
-            dataKey="revenue"
-            radius={[8, 8, 0, 0]}
-          />
-        </BarChart>
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="#6366f1"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        ) : (
+          <BarChart data={data}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#334155"
+              opacity={0.15}
+            />
+
+            <XAxis dataKey="label" />
+
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+            />
+
+            <Tooltip />
+
+            <Bar
+              dataKey="revenue"
+              radius={[8, 8, 0, 0]}
+            />
+          </BarChart>
+        )}
       </ResponsiveContainer>
     </div>
   );

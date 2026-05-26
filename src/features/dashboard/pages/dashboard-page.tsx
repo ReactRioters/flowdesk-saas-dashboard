@@ -16,6 +16,7 @@ import { StatCardSkeleton } from "../components/stat-card-skeleton";
 import { PageHeader } from "../../../components/ui/page-header";
 import { Button } from "../../../components/ui/button";
 import { downloadCSV } from "../../../utils/download-csv";
+import { cn } from "../../../utils/cn";
 
 const statIcons = {
   revenue: DollarSign,
@@ -56,6 +57,7 @@ const revenueChartData = {
 
 export function DashboardPage() {
   const [revenueTimeframe, setRevenueTimeframe] = useState<"7d" | "30d" | "90d" | "1y">("30d");
+  const [chartType, setChartType] = useState<"bar" | "line">("bar");
   const { data: stats = [], isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: getDashboardStats,
@@ -167,6 +169,33 @@ export function DashboardPage() {
               <option value="1y">1y</option>
             </select>
 
+            <div className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+              <button
+                type="button"
+                onClick={() => setChartType("bar")}
+                className={cn(
+                  "rounded-full px-3 py-2 text-sm transition",
+                  chartType === "bar"
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                    : "hover:bg-slate-200 dark:hover:bg-slate-800"
+                )}
+              >
+                Bar
+              </button>
+              <button
+                type="button"
+                onClick={() => setChartType("line")}
+                className={cn(
+                  "rounded-full px-3 py-2 text-sm transition",
+                  chartType === "line"
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                    : "hover:bg-slate-200 dark:hover:bg-slate-800"
+                )}
+              >
+                Line
+              </button>
+            </div>
+
             <Button type="button" onClick={handleExportRevenue} className="gap-2">
               Export
             </Button>
@@ -194,7 +223,10 @@ export function DashboardPage() {
           </div>
         </div>
 
-        <RevenueChart data={revenueChartData[revenueTimeframe]} />
+        <RevenueChart
+          data={revenueChartData[revenueTimeframe]}
+          chartType={chartType}
+        />
       </SectionCard>
 
       <SectionCard
