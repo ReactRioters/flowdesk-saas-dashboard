@@ -14,6 +14,8 @@ import { RecentActivity } from "../components/recent-activity";
 import { RevenueChart } from "../components/revenue-chart";
 import { StatCardSkeleton } from "../components/stat-card-skeleton";
 import { PageHeader } from "../../../components/ui/page-header";
+import { Button } from "../../../components/ui/button";
+import { downloadCSV } from "../../../utils/download-csv";
 
 const statIcons = {
   revenue: DollarSign,
@@ -59,6 +61,24 @@ export function DashboardPage() {
     queryFn: getDashboardStats,
   });
 
+  const timeframeData = revenueChartData[revenueTimeframe];
+  const totalRevenue = timeframeData.reduce((sum, item) => sum + item.revenue, 0);
+  const averageRevenue = Math.round(totalRevenue / timeframeData.length);
+
+  const handleExportRevenue = () => {
+    downloadCSV(
+      "revenue-data.csv",
+      timeframeData.map((item) => ({
+        period: item.label,
+        revenue: item.revenue,
+      })),
+      [
+        { key: "period", label: "Period" },
+        { key: "revenue", label: "Revenue" },
+      ]
+    );
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -97,21 +117,53 @@ export function DashboardPage() {
         description="Monthly recurring revenue growth over the last 6 months."
       >
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            View revenue over the selected timeframe.
-          </p>
-          <select
-            value={revenueTimeframe}
-            onChange={(event) =>
-              setRevenueTimeframe(event.target.value as "7d" | "30d" | "90d" | "1y")
-            }
-            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-slate-500"
-          >
-            <option value="7d">7d</option>
-            <option value="30d">30d</option>
-            <option value="90d">90d</option>
-            <option value="1y">1y</option>
-          </select>
+          <div>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              View revenue over the selected timeframe.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <select
+              value={revenueTimeframe}
+              onChange={(event) =>
+                setRevenueTimeframe(
+                  event.target.value as "7d" | "30d" | "90d" | "1y"
+                )
+              }
+              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-slate-500"
+            >
+              <option value="7d">7d</option>
+              <option value="30d">30d</option>
+              <option value="90d">90d</option>
+              <option value="1y">1y</option>
+            </select>
+
+            <Button type="button" onClick={handleExportRevenue} className="gap-2">
+              Export
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3 mb-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm dark:border-slate-800 dark:bg-slate-900">
+            <p className="text-slate-500 dark:text-slate-400">Total revenue</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
+              ${totalRevenue.toLocaleString()}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm dark:border-slate-800 dark:bg-slate-900">
+            <p className="text-slate-500 dark:text-slate-400">Average period</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
+              ${averageRevenue.toLocaleString()}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm dark:border-slate-800 dark:bg-slate-900">
+            <p className="text-slate-500 dark:text-slate-400">Periods</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
+              {timeframeData.length}
+            </p>
+          </div>
         </div>
 
         <RevenueChart data={revenueChartData[revenueTimeframe]} />
