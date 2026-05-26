@@ -65,6 +65,26 @@ export function DashboardPage() {
   const totalRevenue = timeframeData.reduce((sum, item) => sum + item.revenue, 0);
   const averageRevenue = Math.round(totalRevenue / timeframeData.length);
 
+  const handleExportMetrics = () => {
+    if (!stats.length) return;
+
+    downloadCSV(
+      "business-metrics.csv",
+      stats.map((stat) => ({
+        title: stat.title,
+        value: stat.value,
+        change: stat.change,
+        changeType: stat.changeType,
+      })),
+      [
+        { key: "title", label: "Metric" },
+        { key: "value", label: "Value" },
+        { key: "change", label: "Change" },
+        { key: "changeType", label: "Trend" },
+      ]
+    );
+  };
+
   const handleExportRevenue = () => {
     downloadCSV(
       "revenue-data.csv",
@@ -90,6 +110,14 @@ export function DashboardPage() {
         title="Business Metrics"
         description="Key SaaS growth indicators and performance tracking."
       >
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Core performance indicators for your business.
+          </p>
+          <Button type="button" onClick={handleExportMetrics} className="gap-2">
+            Export Stats
+          </Button>
+        </div>
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
