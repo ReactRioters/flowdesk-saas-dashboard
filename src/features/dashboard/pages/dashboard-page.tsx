@@ -4,7 +4,7 @@ import {
   TrendingDown,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { SectionCard } from "../../../components/ui/section-card";
@@ -12,6 +12,7 @@ import { getDashboardStats } from "../../../services/dashboard-service";
 import { StatCard } from "../components/stat-card";
 import { RecentActivity } from "../components/recent-activity";
 import { RevenueChart } from "../components/revenue-chart";
+import type { RevenueChartHandle } from "../components/revenue-chart";
 import { StatCardSkeleton } from "../components/stat-card-skeleton";
 import { PageHeader } from "../../../components/ui/page-header";
 import { Button } from "../../../components/ui/button";
@@ -99,6 +100,16 @@ export function DashboardPage() {
         { key: "revenue", label: "Revenue" },
       ]
     );
+  };
+
+  const chartRef = useRef<RevenueChartHandle | null>(null);
+
+  const handleExportPNG = async () => {
+    await chartRef.current?.exportAsPNG("revenue.png");
+  };
+
+  const handleExportSVG = async () => {
+    await chartRef.current?.exportAsSVG("revenue.svg");
   };
 
   return (
@@ -199,6 +210,12 @@ export function DashboardPage() {
             <Button type="button" onClick={handleExportRevenue} className="gap-2">
               Export
             </Button>
+            <Button type="button" onClick={handleExportPNG} className="gap-2">
+              Export PNG
+            </Button>
+            <Button type="button" onClick={handleExportSVG} className="gap-2">
+              Export SVG
+            </Button>
           </div>
         </div>
 
@@ -224,6 +241,7 @@ export function DashboardPage() {
         </div>
 
         <RevenueChart
+          ref={chartRef}
           data={revenueChartData[revenueTimeframe]}
           chartType={chartType}
         />
