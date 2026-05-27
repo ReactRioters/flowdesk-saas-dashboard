@@ -69,6 +69,8 @@ export function DashboardPage() {
   };
 
   const handleExportRevenue = () => {
+    if (!timeframeData.length) return;
+
     downloadCSV(
       "revenue-data.csv",
       timeframeData.map((item) => ({
@@ -207,13 +209,13 @@ export function DashboardPage() {
               </button>
             </div>
 
-            <Button type="button" onClick={handleExportRevenue} className="gap-2">
+            <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading} className="gap-2">
               Export
             </Button>
-            <Button type="button" onClick={handleExportPNG} className="gap-2">
+            <Button type="button" onClick={handleExportPNG} disabled={isRevenueLoading} className="gap-2">
               Export PNG
             </Button>
-            <Button type="button" onClick={handleExportSVG} className="gap-2">
+            <Button type="button" onClick={handleExportSVG} disabled={isRevenueLoading} className="gap-2">
               Export SVG
             </Button>
           </div>
