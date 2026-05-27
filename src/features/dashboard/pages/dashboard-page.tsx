@@ -45,7 +45,6 @@ export function DashboardPage() {
   } = useQuery({
     queryKey: ["revenue-data", revenueTimeframe],
     queryFn: () => getRevenueData(revenueTimeframe),
-    keepPreviousData: true,
   });
 
   const totalRevenue = timeframeData.reduce((sum, item) => sum + item.revenue, 0);
