@@ -72,15 +72,23 @@ export const RevenueChart = forwardRef<RevenueChartHandle, RevenueChartProps>(
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        canvas.toBlob((blob) => {
-          if (!blob) return;
-          const pngUrl = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = pngUrl;
-          a.download = fileName;
-          a.click();
-          URL.revokeObjectURL(pngUrl);
-          URL.revokeObjectURL(url);
+        await new Promise<void>((resolve, reject) => {
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              URL.revokeObjectURL(url);
+              reject(new Error("Failed to generate PNG"));
+              return;
+            }
+
+            const pngUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = pngUrl;
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(pngUrl);
+            URL.revokeObjectURL(url);
+            resolve();
+          });
         });
       },
     }));

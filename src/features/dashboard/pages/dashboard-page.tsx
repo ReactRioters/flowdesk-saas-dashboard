@@ -17,6 +17,7 @@ import { StatCardSkeleton } from "../components/stat-card-skeleton";
 import { PageHeader } from "../../../components/ui/page-header";
 import { Button } from "../../../components/ui/button";
 import { downloadCSV } from "../../../utils/download-csv";
+import { toast } from "sonner";
 import { cn } from "../../../utils/cn";
 
 const statIcons = {
@@ -105,11 +106,31 @@ export function DashboardPage() {
   const chartRef = useRef<RevenueChartHandle | null>(null);
 
   const handleExportPNG = async () => {
-    await chartRef.current?.exportAsPNG("revenue.png");
+    if (!chartRef.current) {
+      toast.error("Chart is not ready");
+      return;
+    }
+
+    try {
+      await chartRef.current.exportAsPNG("revenue.png");
+      toast.success("Chart downloaded as PNG");
+    } catch {
+      toast.error("Failed to download chart PNG");
+    }
   };
 
   const handleExportSVG = async () => {
-    await chartRef.current?.exportAsSVG("revenue.svg");
+    if (!chartRef.current) {
+      toast.error("Chart is not ready");
+      return;
+    }
+
+    try {
+      await chartRef.current.exportAsSVG("revenue.svg");
+      toast.success("Chart downloaded as SVG");
+    } catch {
+      toast.error("Failed to download chart SVG");
+    }
   };
 
   return (
