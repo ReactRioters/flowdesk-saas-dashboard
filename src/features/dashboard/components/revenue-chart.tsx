@@ -35,8 +35,57 @@ export const RevenueChart = forwardRef<RevenueChartHandle, RevenueChartProps>(
         const svg = containerRef.current.querySelector("svg");
         if (!svg) return;
 
+        // Clone SVG, inline computed styles, and add background to preserve dark/light mode
+        const original = svg as unknown as SVGElement;
+        const cloned = original.cloneNode(true) as SVGElement;
+
+        const width = original.clientWidth || parseInt(original.getAttribute("width") || "800", 10);
+        const height = original.clientHeight || parseInt(original.getAttribute("height") || "400", 10);
+        cloned.setAttribute("width", String(width));
+        cloned.setAttribute("height", String(height));
+
+        const bgColor = getComputedStyle(document.body).backgroundColor || "#ffffff";
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("width", "100%");
+        rect.setAttribute("height", "100%");
+        rect.setAttribute("fill", bgColor);
+        cloned.insertBefore(rect, cloned.firstChild);
+
+        const originals = Array.from(original.querySelectorAll("*"));
+        const clones = Array.from(cloned.querySelectorAll("*"));
+        const propsToCopy = [
+          "fill",
+          "stroke",
+          "stroke-width",
+          "font-size",
+          "font-family",
+          "font-weight",
+          "color",
+          "opacity",
+          "text-anchor",
+          "stroke-linecap",
+          "stroke-linejoin",
+          "stroke-dasharray",
+          "shape-rendering",
+        ];
+
+        for (let i = 0; i < originals.length && i < clones.length; i++) {
+          const o = originals[i] as Element;
+          const c = clones[i] as Element;
+          const cs = getComputedStyle(o as Element);
+          const styles: string[] = [];
+          for (const prop of propsToCopy) {
+            const val = cs.getPropertyValue(prop);
+            if (val) styles.push(`${prop}:${val}`);
+          }
+          if (styles.length) {
+            const prev = c.getAttribute("style") || "";
+            c.setAttribute("style", `${prev};${styles.join(";")}`);
+          }
+        }
+
         const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svg as unknown as Node);
+        const svgString = serializer.serializeToString(cloned as unknown as Node);
         const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -50,8 +99,57 @@ export const RevenueChart = forwardRef<RevenueChartHandle, RevenueChartProps>(
         const svg = containerRef.current.querySelector("svg");
         if (!svg) return;
 
+        // Prepare cloned SVG with inlined styles and background
+        const original = svg as unknown as SVGElement;
+        const cloned = original.cloneNode(true) as SVGElement;
+
+        const width = original.clientWidth || parseInt(original.getAttribute("width") || "800", 10);
+        const height = original.clientHeight || parseInt(original.getAttribute("height") || "400", 10);
+        cloned.setAttribute("width", String(width));
+        cloned.setAttribute("height", String(height));
+
+        const bgColor = getComputedStyle(document.body).backgroundColor || "#ffffff";
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("width", "100%");
+        rect.setAttribute("height", "100%");
+        rect.setAttribute("fill", bgColor);
+        cloned.insertBefore(rect, cloned.firstChild);
+
+        const originals = Array.from(original.querySelectorAll("*"));
+        const clones = Array.from(cloned.querySelectorAll("*"));
+        const propsToCopy = [
+          "fill",
+          "stroke",
+          "stroke-width",
+          "font-size",
+          "font-family",
+          "font-weight",
+          "color",
+          "opacity",
+          "text-anchor",
+          "stroke-linecap",
+          "stroke-linejoin",
+          "stroke-dasharray",
+          "shape-rendering",
+        ];
+
+        for (let i = 0; i < originals.length && i < clones.length; i++) {
+          const o = originals[i] as Element;
+          const c = clones[i] as Element;
+          const cs = getComputedStyle(o as Element);
+          const styles: string[] = [];
+          for (const prop of propsToCopy) {
+            const val = cs.getPropertyValue(prop);
+            if (val) styles.push(`${prop}:${val}`);
+          }
+          if (styles.length) {
+            const prev = c.getAttribute("style") || "";
+            c.setAttribute("style", `${prev};${styles.join(";")}`);
+          }
+        }
+
         const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svg as unknown as Node);
+        const svgString = serializer.serializeToString(cloned as unknown as Node);
         const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
         const url = URL.createObjectURL(svgBlob);
 
@@ -64,11 +162,11 @@ export const RevenueChart = forwardRef<RevenueChartHandle, RevenueChartProps>(
         });
 
         const canvas = document.createElement("canvas");
-        canvas.width = (svg as unknown as SVGElement).clientWidth || 800;
-        canvas.height = (svg as unknown as SVGElement).clientHeight || 400;
+        canvas.width = width || 800;
+        canvas.height = height || 400;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
-        ctx.fillStyle = getComputedStyle(document.body).backgroundColor || "#fff";
+        ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
