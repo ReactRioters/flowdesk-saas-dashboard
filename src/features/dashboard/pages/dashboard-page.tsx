@@ -15,6 +15,7 @@ import { RevenueChart } from "../components/revenue-chart";
 import type { RevenueChartHandle } from "../components/revenue-chart";
 import { StatCardSkeleton } from "../components/stat-card-skeleton";
 import { PageHeader } from "../../../components/ui/page-header";
+import { Skeleton } from "../../../components/ui/skeleton";
 import { Button } from "../../../components/ui/button";
 import { downloadCSV } from "../../../utils/download-csv";
 import { toast } from "sonner";
@@ -40,9 +41,11 @@ export function DashboardPage() {
   const {
     data: timeframeData = [],
     isLoading: isRevenueLoading,
+    isError: isRevenueError,
   } = useQuery({
     queryKey: ["revenue-data", revenueTimeframe],
     queryFn: () => getRevenueData(revenueTimeframe),
+    keepPreviousData: true,
   });
 
   const totalRevenue = timeframeData.reduce((sum, item) => sum + item.revenue, 0);
@@ -242,11 +245,21 @@ export function DashboardPage() {
           </div>
         </div>
 
-        <RevenueChart
-          ref={chartRef}
-          data={timeframeData}
-          chartType={chartType}
-        />
+        {isRevenueLoading && !timeframeData.length ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+            <Skeleton className="h-[320px] w-full" />
+          </div>
+        ) : isRevenueError ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+            Unable to load revenue data. Please try again.
+          </div>
+        ) : (
+          <RevenueChart
+            ref={chartRef}
+            data={timeframeData}
+            chartType={chartType}
+          />
+        )}
       </SectionCard>
 
       <SectionCard
