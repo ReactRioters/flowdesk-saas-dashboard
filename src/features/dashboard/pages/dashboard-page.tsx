@@ -42,6 +42,7 @@ export function DashboardPage() {
     data: timeframeData = [],
     isLoading: isRevenueLoading,
     isError: isRevenueError,
+    refetch: refetchRevenue,
   } = useQuery({
     queryKey: ["revenue-data", revenueTimeframe],
     queryFn: () => getRevenueData(revenueTimeframe),
@@ -87,6 +88,17 @@ export function DashboardPage() {
   };
 
   const chartRef = useRef<RevenueChartHandle | null>(null);
+
+  const handleRetryRevenue = async () => {
+    if (!refetchRevenue) return;
+
+    try {
+      await refetchRevenue();
+      toast.success("Retrying revenue fetch");
+    } catch {
+      toast.error("Retry failed");
+    }
+  };
 
   const handleExportPNG = async () => {
     if (!chartRef.current) {
@@ -250,7 +262,12 @@ export function DashboardPage() {
           </div>
         ) : isRevenueError ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-            Unable to load revenue data. Please try again.
+            <p>Unable to load revenue data. Please try again.</p>
+            <div className="mt-4 flex items-center justify-center">
+              <Button type="button" onClick={handleRetryRevenue} disabled={isRevenueLoading}>
+                Retry
+              </Button>
+            </div>
           </div>
         ) : (
           <RevenueChart
