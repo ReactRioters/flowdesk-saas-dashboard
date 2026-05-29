@@ -3,17 +3,21 @@ import { render, screen } from "@testing-library/react";
 
 // Mock recharts to avoid ResizeObserver and svg complexities in JSDOM.
 jest.mock("recharts", () => {
-  const React = require("react");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const ReactModule = require("react");
 
-  const ResponsiveContainer = ({ children }: any) => React.createElement("div", { "data-testid": "responsive" }, children);
-  const BarChart = (props: any) => React.createElement("div", { "data-testid": "bar-chart" });
-  const LineChart = (props: any) => React.createElement("div", { "data-testid": "line-chart" });
-  const XAxis = () => React.createElement("div", null);
-  const YAxis = () => React.createElement("div", null);
-  const CartesianGrid = () => React.createElement("div", null);
-  const Tooltip = () => React.createElement("div", null);
-  const Bar = () => React.createElement("div", null);
-  const Line = () => React.createElement("div", null);
+  const ResponsiveContainer = ({ children }: { children: React.ReactNode }) =>
+    ReactModule.createElement("div", { "data-testid": "responsive" }, children);
+  const BarChart = () =>
+    ReactModule.createElement("div", { "data-testid": "bar-chart" });
+  const LineChart = () =>
+    ReactModule.createElement("div", { "data-testid": "line-chart" });
+  const XAxis = () => ReactModule.createElement("div", null);
+  const YAxis = () => ReactModule.createElement("div", null);
+  const CartesianGrid = () => ReactModule.createElement("div", null);
+  const Tooltip = () => ReactModule.createElement("div", null);
+  const Bar = () => ReactModule.createElement("div", null);
+  const Line = () => ReactModule.createElement("div", null);
 
   return {
     __esModule: true,

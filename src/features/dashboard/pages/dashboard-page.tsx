@@ -4,7 +4,7 @@ import {
   TrendingDown,
   Users,
 } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, type KeyboardEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { SectionCard } from "../../../components/ui/section-card";
@@ -128,6 +128,25 @@ export function DashboardPage() {
     }
   };
 
+  const handleChartTypeKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key.toLowerCase() === "b") {
+      setChartType("bar");
+      return;
+    }
+
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key.toLowerCase() === "l") {
+      setChartType("line");
+      return;
+    }
+  };
+
+  const handleTimeframeKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === "1") setRevenueTimeframe("7d");
+    if (e.key === "2") setRevenueTimeframe("30d");
+    if (e.key === "3") setRevenueTimeframe("90d");
+    if (e.key === "4") setRevenueTimeframe("1y");
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -182,12 +201,14 @@ export function DashboardPage() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <select
+              aria-label="Select revenue timeframe"
               value={revenueTimeframe}
               onChange={(event) =>
                 setRevenueTimeframe(
                   event.target.value as "7d" | "30d" | "90d" | "1y"
                 )
               }
+              onKeyDown={handleTimeframeKeyDown}
               className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-slate-500"
             >
               <option value="7d">7d</option>
@@ -196,10 +217,13 @@ export function DashboardPage() {
               <option value="1y">1y</option>
             </select>
 
-            <div className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+            <div role="toolbar" aria-label="Chart type" className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
               <button
                 type="button"
+                aria-label="Bar chart"
+                aria-pressed={chartType === "bar"}
                 onClick={() => setChartType("bar")}
+                onKeyDown={handleChartTypeKeyDown}
                 className={cn(
                   "rounded-full px-3 py-2 text-sm transition",
                   chartType === "bar"
@@ -211,7 +235,10 @@ export function DashboardPage() {
               </button>
               <button
                 type="button"
+                aria-label="Line chart"
+                aria-pressed={chartType === "line"}
                 onClick={() => setChartType("line")}
+                onKeyDown={handleChartTypeKeyDown}
                 className={cn(
                   "rounded-full px-3 py-2 text-sm transition",
                   chartType === "line"
