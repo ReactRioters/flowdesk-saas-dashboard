@@ -92,13 +92,9 @@ export function UsersToolbar({
                     <option value="desc">Name Z-A</option>
                 </Select>
                 {hasActiveFilters && (
-                    <button
-                        type="button"
-                        onClick={onResetFilters}
-                        className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                    >
+                    <Button type="button" variant="secondary" onClick={onResetFilters} className="gap-2">
                         Clear
-                    </button>
+                    </Button>
                 )}
                 {onExport && (
                     <Button type="button" onClick={onExport} className="gap-2">

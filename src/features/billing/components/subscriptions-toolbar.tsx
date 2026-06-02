@@ -60,12 +60,9 @@ export function SubscriptionsToolbar({
           <option value="Cancelled">Cancelled</option>
         </Select>
         {hasActiveFilters && (
-          <button
-            onClick={resetFilters}
-            className="text-sm text-blue-500 hover:text-blue-700"
-          >
+          <Button type="button" variant="secondary" onClick={resetFilters} className="gap-2">
             Reset Filters
-          </button>
+          </Button>
         )}
 
         {onExport && (
