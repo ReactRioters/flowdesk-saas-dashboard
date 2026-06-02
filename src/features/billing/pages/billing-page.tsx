@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,6 +24,7 @@ import { PageHeader } from "../../../components/ui/page-header";
 
 export function BillingPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const {
     data: subscriptions = [],
     isLoading,
@@ -179,7 +181,9 @@ export function BillingPage() {
             <EmptyState
               icon={<CreditCard className="h-6 w-6" />}
               title="No subscriptions found"
-              description="Try adjusting your search or filter criteria."
+              description="It looks like you don't have any active subscriptions yet. Choose a plan to get started or contact support for help."
+              actionLabel="Choose a plan"
+              onAction={() => navigate('/pricing')}
             />
           ) : (
             <SubscriptionsTable

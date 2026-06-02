@@ -73,13 +73,13 @@ export function Sidebar({ open = true, onClose }: SidebarProps) {
                 onClick={onClose}
                 title={isSidebarCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                  `w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     isSidebarCollapsed ? "justify-center" : ""
                   } ${
                     isActive
-                      ? "bg-slate-100 text-slate-900 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+                      ? "bg-slate-100 text-slate-900 border-l-4 border-emerald-500 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-white dark:border-emerald-400 dark:ring-slate-700"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-white"
-                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950`
+                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950`
                 }
               >
                 <Icon className="h-5 w-5 shrink-0" />
