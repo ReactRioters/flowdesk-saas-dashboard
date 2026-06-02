@@ -1,12 +1,15 @@
 import type { ReactNode } from "react";
+import { Button } from "./button";
 
 type EmptyStateProps = {
   title: string;
   description?: string;
   icon?: ReactNode;
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
-export function EmptyState({ title, description, icon }: EmptyStateProps) {
+export function EmptyState({ title, description, icon, actionLabel, onAction }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
       {icon && (
@@ -24,6 +27,12 @@ export function EmptyState({ title, description, icon }: EmptyStateProps) {
           {description}
         </p>
       )}
+
+      {actionLabel && onAction ? (
+        <Button type="button" onClick={onAction} className="mt-6 gap-2">
+          {actionLabel}
+        </Button>
+      ) : null}
     </div>
   );
 }

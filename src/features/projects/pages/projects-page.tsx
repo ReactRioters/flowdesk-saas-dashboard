@@ -163,7 +163,13 @@ export function ProjectsPage() {
         <EmptyState
           icon={<FolderGit2 className="h-6 w-6" />}
           title="No projects found"
-          description="Try adjusting your filters or add a new project to get started."
+          description={
+            hasActiveFilters
+              ? "Try resetting your filters or adjust your search."
+              : "Try adjusting your filters or add a new project to get started."
+          }
+          actionLabel={hasActiveFilters ? "Reset filters" : undefined}
+          onAction={hasActiveFilters ? resetFilters : undefined}
         />
           ) : viewMode === "grid" ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

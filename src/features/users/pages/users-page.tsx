@@ -170,7 +170,13 @@ export function UsersPage() {
               <EmptyState
                 icon={<Users className="h-6 w-6" />}
                 title="No users found"
-                description="Try adjusting your search or filter criteria."
+                description={
+                  hasActiveFilters
+                    ? "Try resetting your filters or searching again."
+                    : "Try adjusting your search or filter criteria."
+                }
+                actionLabel={hasActiveFilters ? "Reset filters" : undefined}
+                onAction={hasActiveFilters ? resetFilters : undefined}
               />
             ) : (
             <UsersTable
