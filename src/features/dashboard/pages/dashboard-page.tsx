@@ -17,6 +17,7 @@ import { StatCardSkeleton } from "../components/stat-card-skeleton";
 import { PageHeader } from "../../../components/ui/page-header";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { Button } from "../../../components/ui/button";
+import { Modal } from "../../../components/ui/modal";
 import { downloadCSV } from "../../../utils/download-csv";
 import { toast } from "sonner";
 import { cn } from "../../../utils/cn";
@@ -88,6 +89,11 @@ export function DashboardPage() {
   };
 
   const chartRef = useRef<RevenueChartHandle | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewType, setPreviewType] = useState<"png" | "svg">("png");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewFileName, setPreviewFileName] = useState("revenue.png");
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   const handleRetryRevenue = async () => {
     if (!refetchRevenue) return;
@@ -100,32 +106,38 @@ export function DashboardPage() {
     }
   };
 
-  const handleExportPNG = async () => {
+  const handlePreview = async (type: "png" | "svg") => {
     if (!chartRef.current) {
       toast.error("Chart is not ready");
       return;
     }
 
+    setPreviewLoading(true);
+    setPreviewType(type);
+    setPreviewFileName(type === "png" ? "revenue.png" : "revenue.svg");
+
     try {
-      await chartRef.current.exportAsPNG("revenue.png");
-      toast.success("Chart downloaded as PNG");
+      const url = await chartRef.current.getExportPreview(type);
+      if (!url) {
+        toast.error("Unable to generate preview");
+        return;
+      }
+      setPreviewUrl(url);
+      setPreviewOpen(true);
     } catch {
-      toast.error("Failed to download chart PNG");
+      toast.error("Failed to generate preview");
+    } finally {
+      setPreviewLoading(false);
     }
   };
 
-  const handleExportSVG = async () => {
-    if (!chartRef.current) {
-      toast.error("Chart is not ready");
-      return;
-    }
+  const handleDownloadPreview = () => {
+    if (!previewUrl) return;
 
-    try {
-      await chartRef.current.exportAsSVG("revenue.svg");
-      toast.success("Chart downloaded as SVG");
-    } catch {
-      toast.error("Failed to download chart SVG");
-    }
+    const a = document.createElement("a");
+    a.href = previewUrl;
+    a.download = previewFileName;
+    a.click();
   };
 
   const handleChartTypeKeyDown = (e: KeyboardEvent<HTMLElement>) => {
@@ -253,11 +265,11 @@ export function DashboardPage() {
             <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading} className="gap-2">
               Export
             </Button>
-            <Button type="button" onClick={handleExportPNG} disabled={isRevenueLoading} className="gap-2">
-              Export PNG
+            <Button type="button" onClick={() => handlePreview("png")} disabled={isRevenueLoading} className="gap-2">
+              Preview PNG
             </Button>
-            <Button type="button" onClick={handleExportSVG} disabled={isRevenueLoading} className="gap-2">
-              Export SVG
+            <Button type="button" onClick={() => handlePreview("svg")} disabled={isRevenueLoading} className="gap-2">
+              Preview SVG
             </Button>
           </div>
         </div>
@@ -304,6 +316,46 @@ export function DashboardPage() {
           />
         )}
       </SectionCard>
+
+      <Modal open={previewOpen} title={`Preview ${previewType.toUpperCase()}`} onClose={() => setPreviewOpen(false)}>
+        <div className="space-y-4">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+            {previewLoading ? (
+              <div className="flex h-80 items-center justify-center text-slate-500 dark:text-slate-400">
+                Generating preview...
+              </div>
+            ) : previewUrl ? (
+              <img
+                src={previewUrl}
+                alt={`Preview of exported ${previewType.toUpperCase()}`}
+                className="mx-auto max-h-[320px] w-full object-contain"
+              />
+            ) : (
+              <div className="flex h-80 items-center justify-center text-slate-500 dark:text-slate-400">
+                Preview unavailable.
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <Button
+              type="button"
+              onClick={handleDownloadPreview}
+              disabled={!previewUrl}
+              className="gap-2"
+            >
+              Download {previewType.toUpperCase()}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setPreviewOpen(false)}
+              className="bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <SectionCard
         title="Recent Activity"

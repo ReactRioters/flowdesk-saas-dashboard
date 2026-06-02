@@ -23,6 +23,92 @@ type RevenueChartProps = {
 export type RevenueChartHandle = {
   exportAsPNG: (fileName?: string) => Promise<void>;
   exportAsSVG: (fileName?: string) => Promise<void>;
+  getExportPreview: (type: "png" | "svg") => Promise<string>;
+};
+
+const cloneSvgWithStyles = (svg: SVGSVGElement): SVGSVGElement => {
+  const original = svg as unknown as SVGSVGElement;
+  const cloned = original.cloneNode(true) as SVGSVGElement;
+
+  const width = original.clientWidth || parseInt(original.getAttribute("width") || "800", 10);
+  const height = original.clientHeight || parseInt(original.getAttribute("height") || "400", 10);
+  cloned.setAttribute("width", String(width));
+  cloned.setAttribute("height", String(height));
+
+  const bgColor = getComputedStyle(document.body).backgroundColor || "#ffffff";
+  const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  rect.setAttribute("width", "100%");
+  rect.setAttribute("height", "100%");
+  rect.setAttribute("fill", bgColor);
+  cloned.insertBefore(rect, cloned.firstChild);
+
+  const originals = Array.from(original.querySelectorAll("*"));
+  const clones = Array.from(cloned.querySelectorAll("*"));
+  const propsToCopy = [
+    "fill",
+    "stroke",
+    "stroke-width",
+    "font-size",
+    "font-family",
+    "font-weight",
+    "color",
+    "opacity",
+    "text-anchor",
+    "stroke-linecap",
+    "stroke-linejoin",
+    "stroke-dasharray",
+    "shape-rendering",
+  ];
+
+  for (let i = 0; i < originals.length && i < clones.length; i++) {
+    const o = originals[i] as Element;
+    const c = clones[i] as Element;
+    const cs = getComputedStyle(o as Element);
+    const styles: string[] = [];
+    for (const prop of propsToCopy) {
+      const val = cs.getPropertyValue(prop);
+      if (val) styles.push(`${prop}:${val}`);
+    }
+    if (styles.length) {
+      const prev = c.getAttribute("style") || "";
+      c.setAttribute("style", `${prev};${styles.join(";")}`);
+    }
+  }
+
+  return cloned;
+};
+
+const serializeSvgToDataUrl = (svg: SVGSVGElement) => {
+  const serializer = new XMLSerializer();
+  const svgString = serializer.serializeToString(svg as unknown as Node);
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
+};
+
+const createPngDataUrl = async (svg: SVGSVGElement) => {
+  const dataUrl = serializeSvgToDataUrl(svg);
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = dataUrl;
+
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error("Failed to load preview image"));
+  });
+
+  const width = parseInt(svg.getAttribute("width") || "800", 10);
+  const height = parseInt(svg.getAttribute("height") || "400", 10);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Unable to get canvas context");
+  const bgColor = getComputedStyle(document.body).backgroundColor || "#ffffff";
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/png");
 };
 
 export const RevenueChart = forwardRef<RevenueChartHandle, RevenueChartProps>(
@@ -30,6 +116,18 @@ export const RevenueChart = forwardRef<RevenueChartHandle, RevenueChartProps>(
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     useImperativeHandle(ref, () => ({
+      getExportPreview: async (type: "png" | "svg") => {
+        if (!containerRef.current) return "";
+        const svg = containerRef.current.querySelector("svg") as SVGSVGElement | null;
+        if (!svg) return "";
+
+        const cloned = cloneSvgWithStyles(svg);
+        if (type === "svg") {
+          return serializeSvgToDataUrl(cloned);
+        }
+
+        return createPngDataUrl(cloned);
+      },
       exportAsSVG: async (fileName = "chart.svg") => {
         if (!containerRef.current) return;
         const svg = containerRef.current.querySelector("svg");
