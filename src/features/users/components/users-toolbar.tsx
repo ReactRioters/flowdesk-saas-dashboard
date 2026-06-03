@@ -1,8 +1,9 @@
-import { Search, Plus, Download } from "lucide-react";
+import { Search, Plus, FileDown } from "lucide-react";
 
 import { Input } from "../../../components/ui/input";
 import { Select } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
+import { cn } from "../../../utils/cn";
 
 type UsersToolbarProps = {
     search: string;
@@ -20,6 +21,7 @@ type UsersToolbarProps = {
     hasActiveFilters: boolean;
     onAddUser: () => void;
     onExport?: () => void;
+    exportLoading?: boolean;
 };
 
 export function UsersToolbar({
@@ -39,6 +41,7 @@ export function UsersToolbar({
     hasActiveFilters,
     onAddUser,
     onExport,
+    exportLoading,
 }: UsersToolbarProps) {
     return (
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -97,9 +100,9 @@ export function UsersToolbar({
                     </Button>
                 )}
                 {onExport && (
-                    <Button type="button" onClick={onExport} className="gap-2">
-                        <Download className="h-4 w-4" />
-                        Export
+                    <Button type="button" onClick={onExport} disabled={exportLoading} className="gap-2">
+                        <FileDown className={cn("h-4 w-4", exportLoading && "animate-bounce")} />
+                        {exportLoading ? "Exporting..." : "Export"}
                     </Button>
                 )}
 

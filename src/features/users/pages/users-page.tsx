@@ -21,6 +21,7 @@ export function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
   const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
@@ -104,24 +105,37 @@ export function UsersPage() {
     deleteUserMutation.mutate(userId);
   };
 
-  const handleExport = () => {
-    const rows = filteredUsers.map((u) => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      role: u.role,
-      status: u.status,
-      plan: u.plan,
-    }));
+  const handleExport = async () => {
+    setExportLoading(true);
+    try {
+      const rows = filteredUsers.map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        status: u.status,
+        plan: u.plan,
+      }));
 
-    downloadCSV("users.csv", rows, [
+      if (rows.length === 0) {
+        toast.error("No users to export");
+        return;
+      }
+
+      downloadCSV("users.csv", rows, [
       { key: "id", label: "ID" },
       { key: "name", label: "Name" },
       { key: "email", label: "Email" },
       { key: "role", label: "Role" },
       { key: "status", label: "Status" },
       { key: "plan", label: "Plan" },
-    ]);
+      ]);
+      toast.success("Users exported successfully");
+    } catch {
+      toast.error("Failed to export users");
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   return (
@@ -143,6 +157,7 @@ export function UsersPage() {
         hasActiveFilters={hasActiveFilters}
         onAddUser={() => setIsCreateOpen(true)}
         onExport={handleExport}
+        exportLoading={exportLoading}
       />
       <p className="text-sm text-slate-600 dark:text-slate-400">
         Showing {paginatedUsers.length} of {filteredUsers.length} users

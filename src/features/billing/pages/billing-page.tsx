@@ -25,6 +25,7 @@ import { PageHeader } from "../../../components/ui/page-header";
 export function BillingPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [exportLoading, setExportLoading] = useState(false);
   const {
     data: subscriptions = [],
     isLoading,
@@ -113,24 +114,37 @@ export function BillingPage() {
     cancelSubscriptionMutation.mutate(subscription);
   };
 
-  const handleExport = () => {
-    const rows = filteredSubscriptions.map((subscription) => ({
-      id: subscription.id,
-      customerName: subscription.customerName,
-      email: subscription.email,
-      plan: subscription.plan,
-      status: subscription.status,
-      renewalDate: subscription.renewalDate,
-    }));
+  const handleExport = async () => {
+    setExportLoading(true);
+    try {
+      const rows = filteredSubscriptions.map((subscription) => ({
+        id: subscription.id,
+        customerName: subscription.customerName,
+        email: subscription.email,
+        plan: subscription.plan,
+        status: subscription.status,
+        renewalDate: subscription.renewalDate,
+      }));
 
-    downloadCSV("subscriptions.csv", rows, [
+      if (rows.length === 0) {
+        toast.error("No subscriptions to export");
+        return;
+      }
+
+      downloadCSV("subscriptions.csv", rows, [
       { key: "id", label: "ID" },
       { key: "customerName", label: "Customer" },
       { key: "email", label: "Email" },
       { key: "plan", label: "Plan" },
       { key: "status", label: "Status" },
       { key: "renewalDate", label: "Renewal Date" },
-    ]);
+      ]);
+      toast.success("Subscriptions exported successfully");
+    } catch {
+      toast.error("Failed to export subscriptions");
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   return (
@@ -150,6 +164,7 @@ export function BillingPage() {
         hasActiveFilters={hasActiveFilters}
         resetFilters={resetFilters}
         onExport={handleExport}
+        exportLoading={exportLoading}
       />
 
       <p className="text-sm text-slate-600 dark:text-slate-400">

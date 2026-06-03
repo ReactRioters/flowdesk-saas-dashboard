@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FolderGit2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "../../../components/ui/page-header";
@@ -38,6 +37,7 @@ export function ProjectsPage() {
     queryFn: getProjects,
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [exportLoading, setExportLoading] = useState(false);
   const {
     search,
     setSearch,
@@ -104,26 +104,39 @@ export function ProjectsPage() {
     }
   };
 
-  const handleExport = () => {
-    const rows = filteredProjects.map((project) => ({
-      id: project.id,
-      name: project.name,
-      description: project.description,
-      status: project.status,
-      progress: `${project.progress}%`,
-      membersCount: project.membersCount,
-      dueDate: project.dueDate,
-    }));
+  const handleExport = async () => {
+    setExportLoading(true);
+    try {
+      const rows = filteredProjects.map((project) => ({
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        status: project.status,
+        progress: `${project.progress}%`,
+        membersCount: project.membersCount,
+        dueDate: project.dueDate,
+      }));
 
-    downloadCSV("projects.csv", rows, [
-      { key: "id", label: "ID" },
-      { key: "name", label: "Name" },
-      { key: "description", label: "Description" },
-      { key: "status", label: "Status" },
-      { key: "progress", label: "Progress" },
-      { key: "membersCount", label: "Members" },
-      { key: "dueDate", label: "Due Date" },
-    ]);
+      if (rows.length === 0) {
+        toast.error("No projects to export");
+        return;
+      }
+
+      downloadCSV("projects.csv", rows, [
+        { key: "id", label: "ID" },
+        { key: "name", label: "Name" },
+        { key: "description", label: "Description" },
+        { key: "status", label: "Status" },
+        { key: "progress", label: "Progress" },
+        { key: "membersCount", label: "Members" },
+        { key: "dueDate", label: "Due Date" },
+      ]);
+      toast.success("Projects exported successfully");
+    } catch {
+      toast.error("Failed to export projects");
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   return (
@@ -144,6 +157,7 @@ export function ProjectsPage() {
         hasActiveFilters={hasActiveFilters}
         onCreateProject={() => setIsCreateOpen(true)}
         onExport={handleExport}
+        exportLoading={exportLoading}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />

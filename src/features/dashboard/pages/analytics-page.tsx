@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { PageHeader } from "../../../components/ui/page-header";
 import { Select } from "../../../components/ui/select";
 import { SectionCard } from "../../../components/ui/section-card";
 import { StatCard } from "../components/stat-card";
-import { BarChart3, Download, MousePointerClick, TrendingUp, Users } from "lucide-react";
+import { BarChart3, FileDown, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { RevenueChart } from "../components/revenue-chart";
 import { TrafficSourcesChart } from "../components/traffic-sources-chart";
 import { AnalyticsInsights } from "../components/analytics-insights";
@@ -13,6 +14,7 @@ import { ActivityFeed } from "../components/activity-feed";
 import { TopPagesTable } from "../components/top-pages-table";
 import { downloadCSV } from "../../../utils/download-csv";
 import { Button } from "../../../components/ui/button";
+import { cn } from "../../../utils/cn";
 
 type Timeframe = "7d" | "30d" | "90d" | "1y";
 
@@ -75,6 +77,7 @@ const analyticsData = {
 export function AnalyticsPage() {
   const [timeframe, setTimeframe] = useState<Timeframe>("30d");
   const [loading, setLoading] = useState(true);
+  const [exportLoading, setExportLoading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -84,32 +87,40 @@ export function AnalyticsPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleExportReport = () => {
-    downloadCSV(
-      "analytics-report.csv",
-      [
-        {
-          metric: "Visitors",
-          value: analyticsData[timeframe].visitors,
-        },
-        {
-          metric: "Conversion Rate",
-          value: analyticsData[timeframe].conversion,
-        },
-        {
-          metric: "Product Clicks",
-          value: analyticsData[timeframe].clicks,
-        },
-        {
-          metric: "Growth",
-          value: analyticsData[timeframe].growth,
-        },
-      ],
-      [
-        { key: "metric", label: "Metric" },
-        { key: "value", label: "Value" },
-      ]
-    );
+  const handleExportReport = async () => {
+    setExportLoading(true);
+    try {
+      downloadCSV(
+        `analytics-report-${timeframe}.csv`,
+        [
+          {
+            metric: "Visitors",
+            value: analyticsData[timeframe].visitors,
+          },
+          {
+            metric: "Conversion Rate",
+            value: analyticsData[timeframe].conversion,
+          },
+          {
+            metric: "Product Clicks",
+            value: analyticsData[timeframe].clicks,
+          },
+          {
+            metric: "Growth",
+            value: analyticsData[timeframe].growth,
+          },
+        ],
+        [
+          { key: "metric", label: "Metric" },
+          { key: "value", label: "Value" },
+        ]
+      );
+      toast.success("Analytics report exported successfully");
+    } catch {
+      toast.error("Failed to export analytics report");
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   const stats = useMemo(() => {
@@ -180,10 +191,11 @@ export function AnalyticsPage() {
           <Button
             type="button"
             onClick={handleExportReport}
+            disabled={exportLoading}
             className="gap-2"
           >
-            <Download className="h-4 w-4" />
-            Export
+            <FileDown className={cn("h-4 w-4", exportLoading && "animate-bounce")} />
+            {exportLoading ? "Exporting..." : "Export"}
           </Button>
         </div>
       </div>

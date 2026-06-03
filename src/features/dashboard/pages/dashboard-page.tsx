@@ -5,6 +5,7 @@ import {
   Users,
   RotateCw,
   AlertCircle,
+  FileDown,
 } from "lucide-react";
 import { useState, useRef, type KeyboardEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -54,40 +55,62 @@ export function DashboardPage() {
   const totalRevenue = timeframeData.reduce((sum, item) => sum + item.revenue, 0);
   const averageRevenue = timeframeData.length ? Math.round(totalRevenue / timeframeData.length) : 0;
 
-  const handleExportMetrics = () => {
-    if (!stats.length) return;
+  const handleExportMetrics = async () => {
+    if (!stats.length) {
+      toast.error("No metrics to export");
+      return;
+    }
 
-    downloadCSV(
-      "business-metrics.csv",
-      stats.map((stat) => ({
-        title: stat.title,
-        value: stat.value,
-        change: stat.change,
-        changeType: stat.changeType,
-      })),
-      [
-        { key: "title", label: "Metric" },
-        { key: "value", label: "Value" },
-        { key: "change", label: "Change" },
-        { key: "changeType", label: "Trend" },
-      ]
-    );
+    setExportMetricsLoading(true);
+    try {
+      downloadCSV(
+        "business-metrics.csv",
+        stats.map((stat) => ({
+          title: stat.title,
+          value: stat.value,
+          change: stat.change,
+          changeType: stat.changeType,
+        })),
+        [
+          { key: "title", label: "Metric" },
+          { key: "value", label: "Value" },
+          { key: "change", label: "Change" },
+          { key: "changeType", label: "Trend" },
+        ]
+      );
+      toast.success("Metrics exported successfully");
+    } catch {
+      toast.error("Failed to export metrics");
+    } finally {
+      setExportMetricsLoading(false);
+    }
   };
 
-  const handleExportRevenue = () => {
-    if (!timeframeData.length) return;
+  const handleExportRevenue = async () => {
+    if (!timeframeData.length) {
+      toast.error("No revenue data to export");
+      return;
+    }
 
-    downloadCSV(
-      "revenue-data.csv",
-      timeframeData.map((item) => ({
-        period: item.label,
-        revenue: item.revenue,
-      })),
-      [
-        { key: "period", label: "Period" },
-        { key: "revenue", label: "Revenue" },
-      ]
-    );
+    setExportRevenueLoading(true);
+    try {
+      downloadCSV(
+        `revenue-data-${revenueTimeframe}.csv`,
+        timeframeData.map((item) => ({
+          period: item.label,
+          revenue: item.revenue,
+        })),
+        [
+          { key: "period", label: "Period" },
+          { key: "revenue", label: "Revenue" },
+        ]
+      );
+      toast.success("Revenue data exported successfully");
+    } catch {
+      toast.error("Failed to export revenue data");
+    } finally {
+      setExportRevenueLoading(false);
+    }
   };
 
   const chartRef = useRef<RevenueChartHandle | null>(null);
@@ -96,6 +119,8 @@ export function DashboardPage() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [previewFileName, setPreviewFileName] = useState("revenue.png");
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [exportMetricsLoading, setExportMetricsLoading] = useState(false);
+  const [exportRevenueLoading, setExportRevenueLoading] = useState(false);
 
   const handleRetryRevenue = async () => {
     if (!refetchRevenue) return;
@@ -176,8 +201,9 @@ export function DashboardPage() {
           <p className="text-sm text-slate-600 dark:text-slate-400">
             Core performance indicators for your business.
           </p>
-          <Button type="button" onClick={handleExportMetrics} className="gap-2">
-            Export Stats
+          <Button type="button" onClick={handleExportMetrics} disabled={exportMetricsLoading || !stats.length} className="gap-2">
+            <FileDown className={cn("h-4 w-4", exportMetricsLoading && "animate-bounce")} />
+            {exportMetricsLoading ? "Exporting..." : "Export Stats"}
           </Button>
         </div>
         {isLoading ? (
@@ -264,8 +290,9 @@ export function DashboardPage() {
               </button>
             </div>
 
-            <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading} className="gap-2">
-              Export
+            <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading || exportRevenueLoading} className="gap-2">
+              <FileDown className={cn("h-4 w-4", exportRevenueLoading && "animate-bounce")} />
+              {exportRevenueLoading ? "Exporting..." : "Export"}
             </Button>
             <Button type="button" onClick={() => handlePreview("png")} disabled={isRevenueLoading} className="gap-2">
               Preview PNG
