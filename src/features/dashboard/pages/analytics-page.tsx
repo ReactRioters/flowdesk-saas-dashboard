@@ -176,6 +176,9 @@ export function AnalyticsPage() {
 
         <div className="flex items-center gap-3">
           <Select
+            aria-label="Select analytics timeframe"
+            aria-description="Choose a timeframe to view analytics data. Options: Last 7, 30, 90 days, or 1 year."
+            title="Select timeframe for analytics view"
             value={timeframe}
             onChange={(event) =>
               setTimeframe(event.target.value as Timeframe)
@@ -192,6 +195,8 @@ export function AnalyticsPage() {
             type="button"
             onClick={handleExportReport}
             disabled={exportLoading}
+            aria-label="Export analytics report as CSV"
+            title="Download analytics metrics for the selected timeframe as a CSV file"
             className="gap-2"
           >
             <FileDown className={cn("h-4 w-4", exportLoading && "animate-bounce")} />

@@ -242,6 +242,8 @@ export function DashboardPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <select
               aria-label="Select revenue timeframe"
+              aria-description="Choose a timeframe to view revenue data. Use keyboard shortcuts: 1 for 7 days, 2 for 30 days, 3 for 90 days, 4 for 1 year"
+              title="Select timeframe: 7d, 30d, 90d, or 1y"
               value={revenueTimeframe}
               onChange={(event) =>
                 setRevenueTimeframe(
@@ -257,11 +259,13 @@ export function DashboardPage() {
               <option value="1y">1y</option>
             </select>
 
-            <div role="toolbar" aria-label="Chart type" className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+            <div role="toolbar" aria-label="Chart type selection" aria-description="Switch between bar and line chart views. Use arrow keys to navigate, Enter to select." className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
               <button
                 type="button"
-                aria-label="Bar chart"
+                aria-label="Bar chart view"
                 aria-pressed={chartType === "bar"}
+                aria-describedby="chart-type-help"
+                title="Display revenue data as a bar chart"
                 onClick={() => setChartType("bar")}
                 onKeyDown={handleChartTypeKeyDown}
                 className={cn(
@@ -275,8 +279,10 @@ export function DashboardPage() {
               </button>
               <button
                 type="button"
-                aria-label="Line chart"
+                aria-label="Line chart view"
                 aria-pressed={chartType === "line"}
+                aria-describedby="chart-type-help"
+                title="Display revenue data as a line chart"
                 onClick={() => setChartType("line")}
                 onKeyDown={handleChartTypeKeyDown}
                 className={cn(
@@ -289,15 +295,16 @@ export function DashboardPage() {
                 Line
               </button>
             </div>
+            <span id="chart-type-help" className="sr-only">Use arrow left and right keys to switch between bar and line chart, then press Enter to select.</span>
 
-            <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading || exportRevenueLoading} className="gap-2">
+            <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading || exportRevenueLoading} aria-label="Export revenue data as CSV" title="Download revenue data for the selected timeframe" className="gap-2">
               <FileDown className={cn("h-4 w-4", exportRevenueLoading && "animate-bounce")} />
               {exportRevenueLoading ? "Exporting..." : "Export"}
             </Button>
-            <Button type="button" onClick={() => handlePreview("png")} disabled={isRevenueLoading} className="gap-2">
+            <Button type="button" onClick={() => handlePreview("png")} disabled={isRevenueLoading} aria-label="Preview and download chart as PNG image" title="Generate a PNG preview of the revenue chart" className="gap-2">
               Preview PNG
             </Button>
-            <Button type="button" onClick={() => handlePreview("svg")} disabled={isRevenueLoading} className="gap-2">
+            <Button type="button" onClick={() => handlePreview("svg")} disabled={isRevenueLoading} aria-label="Preview and download chart as SVG vector image" title="Generate an SVG preview of the revenue chart" className="gap-2">
               Preview SVG
             </Button>
           </div>
