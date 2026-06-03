@@ -24,6 +24,10 @@ export function SettingsPage() {
       <PageHeader
         title="Settings"
         description="Manage account preferences, security, notifications, and appearance."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Settings" }
+        ]}
       />
 
       <Tabs

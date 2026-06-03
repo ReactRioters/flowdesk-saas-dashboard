@@ -157,6 +157,10 @@ export function AnalyticsPage() {
         <PageHeader
           title="Analytics"
           description="Track visitor behavior, conversion performance, and product growth."
+          breadcrumbs={[
+            { label: "Dashboard", href: "/" },
+            { label: "Analytics" }
+          ]}
         />
 
         <div className="flex items-center gap-3">
