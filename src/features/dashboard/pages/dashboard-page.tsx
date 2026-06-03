@@ -3,6 +3,8 @@ import {
   DollarSign,
   TrendingDown,
   Users,
+  RotateCw,
+  AlertCircle,
 } from "lucide-react";
 import { useState, useRef, type KeyboardEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -300,13 +302,23 @@ export function DashboardPage() {
             <Skeleton className="h-[320px] w-full" />
           </div>
         ) : isRevenueError ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-            <p>Unable to load revenue data. Please try again.</p>
-            <div className="mt-4 flex items-center justify-center">
-              <Button type="button" onClick={handleRetryRevenue} disabled={isRevenueLoading}>
-                Retry
-              </Button>
-            </div>
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-red-200 bg-red-50 p-12 dark:border-red-900 dark:bg-red-950">
+            <AlertCircle className="mb-4 h-12 w-12 text-red-500" />
+            <h3 className="text-lg font-semibold text-red-900 dark:text-red-200">
+              Failed to load revenue data
+            </h3>
+            <p className="mt-2 text-center text-sm text-red-700 dark:text-red-300">
+              An error occurred while fetching revenue data. Please try again.
+            </p>
+            <Button 
+              type="button" 
+              onClick={handleRetryRevenue} 
+              disabled={isRevenueLoading}
+              className="mt-6 gap-2"
+            >
+              <RotateCw className={cn("h-4 w-4", isRevenueLoading && "animate-spin")} />
+              {isRevenueLoading ? "Retrying..." : "Retry"}
+            </Button>
           </div>
         ) : (
           <RevenueChart
