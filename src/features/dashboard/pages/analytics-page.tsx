@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { toast } from "sonner";
 
 import { PageHeader } from "../../../components/ui/page-header";
@@ -123,6 +123,13 @@ export function AnalyticsPage() {
     }
   };
 
+  const handleTimeframeKeyDown = (e: KeyboardEvent<HTMLSelectElement>) => {
+    if (e.key === "1") setTimeframe("7d");
+    if (e.key === "2") setTimeframe("30d");
+    if (e.key === "3") setTimeframe("90d");
+    if (e.key === "4") setTimeframe("1y");
+  };
+
   const stats = useMemo(() => {
     const data = analyticsData[timeframe];
 
@@ -177,12 +184,13 @@ export function AnalyticsPage() {
         <div className="flex items-center gap-3">
           <Select
             aria-label="Select analytics timeframe"
-            aria-description="Choose a timeframe to view analytics data. Options: Last 7, 30, 90 days, or 1 year."
+            aria-description="Choose a timeframe to view analytics data. Use keyboard shortcuts: 1 for 7 days, 2 for 30 days, 3 for 90 days, 4 for 1 year."
             title="Select timeframe for analytics view"
             value={timeframe}
             onChange={(event) =>
               setTimeframe(event.target.value as Timeframe)
             }
+            onKeyDown={handleTimeframeKeyDown}
             className="w-full sm:w-40"
           >
             <option value="7d">Last 7 days</option>
