@@ -182,22 +182,28 @@ export function AnalyticsPage() {
         />
 
         <div className="flex items-center gap-3">
-          <Select
-            aria-label="Select analytics timeframe"
-            aria-description="Choose a timeframe to view analytics data. Use keyboard shortcuts: 1 for 7 days, 2 for 30 days, 3 for 90 days, 4 for 1 year."
-            title="Select timeframe for analytics view"
-            value={timeframe}
-            onChange={(event) =>
-              setTimeframe(event.target.value as Timeframe)
-            }
-            onKeyDown={handleTimeframeKeyDown}
-            className="w-full sm:w-40"
-          >
+          <div className="flex items-center gap-2">
+            <Select
+              aria-label="Select analytics timeframe"
+              aria-description="Choose a timeframe to view analytics data. Use keyboard shortcuts: 1 for 7 days, 2 for 30 days, 3 for 90 days, 4 for 1 year."
+              aria-describedby="analytics-timeframe-help"
+              title="Select timeframe for analytics view"
+              value={timeframe}
+              onChange={(event) =>
+                setTimeframe(event.target.value as Timeframe)
+              }
+              onKeyDown={handleTimeframeKeyDown}
+              className="w-full sm:w-40"
+            >
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="90d">Last 90 days</option>
             <option value="1y">Last 1 year</option>
-          </Select>
+            </Select>
+
+            <span className="text-xs text-slate-500 dark:text-slate-400">Keyboard: press 1 (7d), 2 (30d), 3 (90d), 4 (1y)</span>
+            <span id="analytics-timeframe-help" className="sr-only">Press number keys 1 through 4 to quickly change timeframe: 1 = 7 days, 2 = 30 days, 3 = 90 days, 4 = 1 year.</span>
+          </div>
 
           <Button
             type="button"
