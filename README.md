@@ -36,6 +36,15 @@ A modern SaaS admin dashboard built with React, TypeScript, Vite, Tailwind CSS, 
 - Sonner
 - Lucide React
 
+## Accessibility
+
+- Keyboard shortcuts for timeframe selection across dashboard and analytics views
+- Accessible chart controls with `aria-label`, `aria-description`, and `aria-pressed`
+- Screen-reader helper text for keyboard navigation hints
+- Clear focus and active states for sidebar and toolbar controls
+- Export buttons with accessible labels and tooltips
+- Improved empty and error states with actionable CTAs and accessible messaging
+
 ## Learning Focus
 
 This project focuses on scalable frontend architecture, reusable components, async state management, form validation, UI state handling, and real SaaS dashboard patterns.
