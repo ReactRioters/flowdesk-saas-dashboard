@@ -240,61 +240,72 @@ export function DashboardPage() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <select
-              aria-label="Select revenue timeframe"
-              aria-description="Choose a timeframe to view revenue data. Use keyboard shortcuts: 1 for 7 days, 2 for 30 days, 3 for 90 days, 4 for 1 year"
-              title="Select timeframe: 7d, 30d, 90d, or 1y"
-              value={revenueTimeframe}
-              onChange={(event) =>
-                setRevenueTimeframe(
-                  event.target.value as "7d" | "30d" | "90d" | "1y"
-                )
-              }
-              onKeyDown={handleTimeframeKeyDown}
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-slate-500"
-            >
-              <option value="7d">7d</option>
-              <option value="30d">30d</option>
-              <option value="90d">90d</option>
-              <option value="1y">1y</option>
-            </select>
+            <div className="flex items-center gap-2">
+              <select
+                aria-label="Select revenue timeframe"
+                aria-description="Choose a timeframe to view revenue data. Use keyboard shortcuts: 1 for 7 days, 2 for 30 days, 3 for 90 days, 4 for 1 year"
+                aria-describedby="dashboard-timeframe-help"
+                title="Select timeframe: 7d, 30d, 90d, or 1y"
+                value={revenueTimeframe}
+                onChange={(event) =>
+                  setRevenueTimeframe(
+                    event.target.value as "7d" | "30d" | "90d" | "1y"
+                  )
+                }
+                onKeyDown={handleTimeframeKeyDown}
+                className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-slate-500"
+              >
+                <option value="7d">7d</option>
+                <option value="30d">30d</option>
+                <option value="90d">90d</option>
+                <option value="1y">1y</option>
+              </select>
 
-            <div role="toolbar" aria-label="Chart type selection" aria-description="Switch between bar and line chart views. Use arrow keys to navigate, Enter to select." className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-              <button
-                type="button"
-                aria-label="Bar chart view"
-                aria-pressed={chartType === "bar"}
-                aria-describedby="chart-type-help"
-                title="Display revenue data as a bar chart"
-                onClick={() => setChartType("bar")}
-                onKeyDown={handleChartTypeKeyDown}
-                className={cn(
-                  "rounded-full px-3 py-2 text-sm transition",
-                  chartType === "bar"
-                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
-                    : "hover:bg-slate-200 dark:hover:bg-slate-800"
-                )}
-              >
-                Bar
-              </button>
-              <button
-                type="button"
-                aria-label="Line chart view"
-                aria-pressed={chartType === "line"}
-                aria-describedby="chart-type-help"
-                title="Display revenue data as a line chart"
-                onClick={() => setChartType("line")}
-                onKeyDown={handleChartTypeKeyDown}
-                className={cn(
-                  "rounded-full px-3 py-2 text-sm transition",
-                  chartType === "line"
-                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
-                    : "hover:bg-slate-200 dark:hover:bg-slate-800"
-                )}
-              >
-                Line
-              </button>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Keyboard: 1 (7d), 2 (30d), 3 (90d), 4 (1y)</span>
+              <span id="dashboard-timeframe-help" className="sr-only">Press number keys 1 through 4 to quickly change timeframe: 1 = 7 days, 2 = 30 days, 3 = 90 days, 4 = 1 year.</span>
             </div>
+
+            <div className="flex items-center gap-3">
+              <div role="toolbar" aria-label="Chart type selection" aria-description="Switch between bar and line chart views. Use arrow keys to navigate, Enter to select." className="inline-flex rounded-full border border-slate-300 bg-slate-100 p-1 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                <button
+                  type="button"
+                  aria-label="Bar chart view"
+                  aria-pressed={chartType === "bar"}
+                  aria-describedby="chart-type-help"
+                  title="Display revenue data as a bar chart"
+                  onClick={() => setChartType("bar")}
+                  onKeyDown={handleChartTypeKeyDown}
+                  className={cn(
+                    "rounded-full px-3 py-2 text-sm transition",
+                    chartType === "bar"
+                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                      : "hover:bg-slate-200 dark:hover:bg-slate-800"
+                  )}
+                >
+                  Bar
+                </button>
+                <button
+                  type="button"
+                  aria-label="Line chart view"
+                  aria-pressed={chartType === "line"}
+                  aria-describedby="chart-type-help"
+                  title="Display revenue data as a line chart"
+                  onClick={() => setChartType("line")}
+                  onKeyDown={handleChartTypeKeyDown}
+                  className={cn(
+                    "rounded-full px-3 py-2 text-sm transition",
+                    chartType === "line"
+                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                      : "hover:bg-slate-200 dark:hover:bg-slate-800"
+                  )}
+                >
+                  Line
+                </button>
+              </div>
+
+              <span className="text-xs text-slate-500 dark:text-slate-400">Keyboard: use ← and → to switch, then press Enter</span>
+            </div>
+
             <span id="chart-type-help" className="sr-only">Use arrow left and right keys to switch between bar and line chart, then press Enter to select.</span>
 
             <Button type="button" onClick={handleExportRevenue} disabled={isRevenueLoading || exportRevenueLoading} aria-label="Export revenue data as CSV" title="Download revenue data for the selected timeframe" className="gap-2">
