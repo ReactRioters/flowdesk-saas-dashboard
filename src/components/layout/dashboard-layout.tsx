@@ -20,11 +20,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div
-        className={
+        className={`transition-all duration-300 ${
           isSidebarCollapsed
             ? "lg:pl-20"
             : "lg:pl-72"
-        }
+        }`}
       >
         <Header onOpenSidebar={() => setSidebarOpen(true)} />
 
