@@ -39,9 +39,7 @@
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
-  },
-  "devDependencies": {
+    "vite": "^8.0.12",
     "vitest": "^1.1.5",
     "@testing-library/react": "^15.0.0",
     "@testing-library/jest-dom": "^6.0.0",
