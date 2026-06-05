@@ -16,6 +16,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
   const pageTitleMap: Record<string, string> = {
     "/": "Dashboard",
     "/users": "Users",
+    "/projects": "Projects",
     "/billing": "Billing",
     "/analytics": "Analytics",
     "/settings": "Settings",
